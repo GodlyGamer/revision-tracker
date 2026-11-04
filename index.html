@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revision Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Hot Glass: near-black ground, liquid glass panels and buttons,
+   silver edges at rest, iridescent spectrum only on interaction. */
+@property --ang  { syntax:'<angle>'; inherits:false; initial-value:0deg }
+@property --spin { syntax:'<angle>'; inherits:false; initial-value:0deg }
+@keyframes lg-spin { to { --spin:360deg } }
+
+:root{
+  /* Light: frosted white glass */
+  --ground: radial-gradient(ellipse 95% 80% at 50% 0%, #ffffff, #f6f6f8 30%, #ececf0 65%, #e4e4e9), #e4e4e9;
+  --text:#141416; --muted:#55555c; --faint:#6a6a71;
+  --hair:rgba(0,0,0,.08);
+  --row-bg:rgba(255,255,255,.45); --row-border:rgba(0,0,0,.07);
+  --field-bg:rgba(255,255,255,.6); --field-border:rgba(0,0,0,.12);
+  --pbg: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.66) 26%, rgba(255,255,255,.55) 60%, rgba(255,255,255,.75)), rgba(245,245,247,.5);
+  --pshadow: 0 0 0 1px rgba(0,0,0,.08), inset 0 2px 1px -1px rgba(255,255,255,1), inset 0 0 0 1px rgba(255,255,255,.5),
+             inset 0 -1.5px 1px -.5px rgba(255,255,255,.9), 0 24px 50px rgba(20,20,40,.12), 0 2px 6px rgba(20,20,40,.08);
+  --lgbg: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.72) 26%, rgba(255,255,255,.5) 56%, rgba(255,255,255,.62) 82%, rgba(255,255,255,.85)), rgba(236,236,240,.4);
+  --lgink:#1a1a1c; --lgtext-shadow:0 1px 0 rgba(255,255,255,.8);
+  --lgshadow: 0 0 0 1px rgba(0,0,0,.12), inset 0 1.5px .5px -.5px rgba(255,255,255,1), inset 0 0 0 1px rgba(255,255,255,.4),
+              inset 0 -1.5px 1px -.5px rgba(255,255,255,.9), inset 0 -10px 14px -12px rgba(0,0,0,.12), 0 8px 18px rgba(20,20,40,.12), 0 1px 3px rgba(20,20,40,.1);
+  --pribg: linear-gradient(180deg, #3a3a3e, #26262a 30%, #1a1a1c 66%, #2a2a2e);
+  --priink:#f4f4f6; --pri-text-shadow:0 -1px 0 rgba(0,0,0,.4);
+  --prishadow: 0 0 0 1px rgba(0,0,0,.55), inset 0 1.5px .5px -.5px rgba(255,255,255,.45), inset 0 -1.5px 1px -.5px rgba(255,255,255,.18), 0 8px 18px rgba(20,20,40,.22);
+  --spectrum: #e0359f,#f08a00,#c9c400,#00b26e,#0098c8,#3d4fe0,#9a3ee0,#e0359f; --glow:.45;
+  /* Status colours: the only colour at rest, always paired with a text label */
+  --red:#b3261e; --red-bg:rgba(179,38,30,.09); --amber:#8a5300; --amber-bg:rgba(220,140,0,.12); --green:#1c6e37; --green-bg:rgba(30,140,70,.1);
+  --ember:#c22a10; --ember-edge:rgba(255,45,23,.55); --ember-glow:rgba(255,59,31,.22);
+  --ember-fill: linear-gradient(90deg, #ff7a5c, #ff2d17 45%, #d91a0b); --silver-fill: linear-gradient(90deg, #3a3a3e, #1a1a1c);
+  --track:rgba(0,0,0,.06);
+  --backdrop:rgba(240,240,245,.55);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --ground: radial-gradient(ellipse 95% 80% at 50% 0%, #161618, #151517, #131315, #111113, #0f0f10, #0d0d0e, #0b0b0c, #09090a, #070708, #060606, #050505, #040404, #030303, #020202, #010101, #000000), #000000;
+  --text:#ececef; --muted:#9a9aa1; --faint:#7a7a81;
+  --hair:rgba(255,255,255,.06);
+  --row-bg:rgba(255,255,255,.025); --row-border:rgba(255,255,255,.06);
+  --field-bg:rgba(255,255,255,.04); --field-border:rgba(255,255,255,.12);
+  --pbg: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.06) 16%, rgba(255,255,255,.035) 34%, rgba(255,255,255,.025) 55%, rgba(255,255,255,.03) 78%, rgba(255,255,255,.06) 100%), rgba(18,18,21,.55);
+  --pshadow: 0 0 0 1px rgba(0,0,0,.55), inset 0 2px 1px -1px rgba(255,255,255,.6), inset 0 0 0 1px rgba(255,255,255,.07),
+             inset 0 -1.5px 1px -.5px rgba(255,255,255,.22), inset 0 40px 60px -48px rgba(255,255,255,.18), 0 40px 80px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
+  --lgbg: linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.09) 22%, rgba(255,255,255,.05) 44%, rgba(255,255,255,.03) 62%, rgba(255,255,255,.05) 82%, rgba(255,255,255,.1) 100%), rgba(28,28,32,.5);
+  --lgink:rgba(255,255,255,.86); --lgtext-shadow:0 1px 0 rgba(255,255,255,.14), 0 -1px 0 rgba(0,0,0,.35), 0 0 14px rgba(255,255,255,.2);
+  --lgshadow: 0 0 0 1px rgba(0,0,0,.6), inset 0 1.5px .5px -.5px rgba(255,255,255,.8), inset 0 0 0 1px rgba(255,255,255,.09),
+              inset 0 -1.5px 1px -.5px rgba(255,255,255,.4), inset 0 10px 14px -10px rgba(255,255,255,.24), inset 0 -12px 16px -12px rgba(255,255,255,.2),
+              inset 0 0 16px rgba(0,0,0,.28), 0 12px 28px rgba(0,0,0,.55), 0 2px 4px rgba(0,0,0,.4);
+  --pribg: linear-gradient(180deg, rgba(255,255,255,.97), rgba(244,244,246,.93) 30%, rgba(226,226,231,.9) 66%, rgba(238,238,242,.94));
+  --priink:#141416; --pri-text-shadow:0 1px 0 rgba(255,255,255,.6);
+  --prishadow: 0 0 0 1px rgba(0,0,0,.6), inset 0 1.5px .5px -.5px rgba(255,255,255,1), inset 0 -1.5px 1px -.5px rgba(255,255,255,.8),
+               inset 0 -10px 14px -10px rgba(0,0,0,.18), 0 12px 28px rgba(0,0,0,.55), 0 2px 4px rgba(0,0,0,.4);
+  --spectrum: #ff5ad1,#ffb547,#f4ff7a,#5dffb0,#49e6ff,#6a7bff,#c86bff,#ff5ad1; --glow:.55;
+  --red:#ff7a6b; --red-bg:rgba(255,70,50,.1); --amber:#ffc461; --amber-bg:rgba(255,180,60,.1); --green:#72dc9c; --green-bg:rgba(80,220,140,.09);
+  --ember:#ff6a4d; --ember-edge:rgba(255,45,23,.6); --ember-glow:rgba(255,59,31,.28);
+  --silver-fill: linear-gradient(90deg, #9a9aa1, #f4f4f6);
+  --track:rgba(255,255,255,.05);
+  --backdrop:rgba(0,0,0,.6);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ground: radial-gradient(ellipse 95% 80% at 50% 0%, #161618, #151517, #131315, #111113, #0f0f10, #0d0d0e, #0b0b0c, #09090a, #070708, #060606, #050505, #040404, #030303, #020202, #010101, #000000), #000000;
+  --text:#ececef; --muted:#9a9aa1; --faint:#7a7a81;
+  --hair:rgba(255,255,255,.06);
+  --row-bg:rgba(255,255,255,.025); --row-border:rgba(255,255,255,.06);
+  --field-bg:rgba(255,255,255,.04); --field-border:rgba(255,255,255,.12);
+  --pbg: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.06) 16%, rgba(255,255,255,.035) 34%, rgba(255,255,255,.025) 55%, rgba(255,255,255,.03) 78%, rgba(255,255,255,.06) 100%), rgba(18,18,21,.55);
+  --pshadow: 0 0 0 1px rgba(0,0,0,.55), inset 0 2px 1px -1px rgba(255,255,255,.6), inset 0 0 0 1px rgba(255,255,255,.07),
+             inset 0 -1.5px 1px -.5px rgba(255,255,255,.22), inset 0 40px 60px -48px rgba(255,255,255,.18), 0 40px 80px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
+  --lgbg: linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.09) 22%, rgba(255,255,255,.05) 44%, rgba(255,255,255,.03) 62%, rgba(255,255,255,.05) 82%, rgba(255,255,255,.1) 100%), rgba(28,28,32,.5);
+  --lgink:rgba(255,255,255,.86); --lgtext-shadow:0 1px 0 rgba(255,255,255,.14), 0 -1px 0 rgba(0,0,0,.35), 0 0 14px rgba(255,255,255,.2);
+  --lgshadow: 0 0 0 1px rgba(0,0,0,.6), inset 0 1.5px .5px -.5px rgba(255,255,255,.8), inset 0 0 0 1px rgba(255,255,255,.09),
+              inset 0 -1.5px 1px -.5px rgba(255,255,255,.4), inset 0 10px 14px -10px rgba(255,255,255,.24), inset 0 -12px 16px -12px rgba(255,255,255,.2),
+              inset 0 0 16px rgba(0,0,0,.28), 0 12px 28px rgba(0,0,0,.55), 0 2px 4px rgba(0,0,0,.4);
+  --pribg: linear-gradient(180deg, rgba(255,255,255,.97), rgba(244,244,246,.93) 30%, rgba(226,226,231,.9) 66%, rgba(238,238,242,.94));
+  --priink:#141416; --pri-text-shadow:0 1px 0 rgba(255,255,255,.6);
+  --prishadow: 0 0 0 1px rgba(0,0,0,.6), inset 0 1.5px .5px -.5px rgba(255,255,255,1), inset 0 -1.5px 1px -.5px rgba(255,255,255,.8),
+               inset 0 -10px 14px -10px rgba(0,0,0,.18), 0 12px 28px rgba(0,0,0,.55), 0 2px 4px rgba(0,0,0,.4);
+  --spectrum: #ff5ad1,#ffb547,#f4ff7a,#5dffb0,#49e6ff,#6a7bff,#c86bff,#ff5ad1; --glow:.55;
+  --red:#ff7a6b; --red-bg:rgba(255,70,50,.1); --amber:#ffc461; --amber-bg:rgba(255,180,60,.1); --green:#72dc9c; --green-bg:rgba(80,220,140,.09);
+  --ember:#ff6a4d; --ember-edge:rgba(255,45,23,.6); --ember-glow:rgba(255,59,31,.28);
+  --silver-fill: linear-gradient(90deg, #9a9aa1, #f4f4f6);
+  --track:rgba(255,255,255,.05);
+  --backdrop:rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;background:var(--ground);background-attachment:fixed;min-height:100%}
+body{margin:0;background:var(--ground);background-attachment:fixed;min-height:100vh;color:var(--text);
+  font:15.5px/1.55 "Geist",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.mono,.cap{font-family:"Geist Mono",ui-monospace,"SF Mono",Consolas,monospace}
+.cap{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:500}
+.wrap{max-width:1000px;margin:0 auto;padding:22px 16px 16px}
+header.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;justify-content:space-between;margin-bottom:6px}
+h1{font-size:1.9rem;font-weight:300;letter-spacing:-.02em;margin:0}
+h2{font-size:1.25rem;font-weight:400;letter-spacing:-.01em;margin:36px 0 12px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+h3{font-size:1.05rem;font-weight:500;margin:0;letter-spacing:-.005em}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;isolation:isolate}
+
+/* ---------- Liquid glass button (.lg) ---------- */
+button{font:inherit;font-size:.88rem;font-weight:500;line-height:1.2;cursor:pointer;position:relative;
+  padding:9px 16px;border-radius:999px;border:none;
+  color:var(--lgink);text-shadow:var(--lgtext-shadow);background:var(--lgbg);box-shadow:var(--lgshadow);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);
+  transition:transform 300ms cubic-bezier(.2,.7,.2,1)}
+button.primary{color:var(--priink);text-shadow:var(--pri-text-shadow);background:var(--pribg);box-shadow:var(--prishadow)}
+button.danger{color:var(--red)}
+button::before,button::after{content:"";position:absolute;border-radius:inherit;pointer-events:none;
+  background:conic-gradient(from calc(var(--ang) + var(--spin)), var(--spectrum));
+  opacity:0;animation:lg-spin 3.2s linear infinite paused;
+  transition:opacity 700ms cubic-bezier(.2,.7,.2,1), --ang 1400ms cubic-bezier(.2,.7,.2,1)}
+button::before{inset:-1px;padding:1.5px;
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)}
+button::after{inset:-6px;filter:blur(12px);z-index:-1}
+button:hover::before,button:focus-visible::before{opacity:.9;animation-play-state:running;transition-duration:300ms,1400ms}
+button:hover::after,button:focus-visible::after{animation-play-state:running}
+button:active{transform:scale(.97);transition-duration:90ms}
+button:active::before{opacity:1;--ang:220deg;transition-duration:60ms,1400ms}
+button:active::after{opacity:var(--glow);--ang:220deg;transition-duration:60ms,1400ms}
+button:focus-visible{outline:none}
+/* Quiet text button: no glass */
+button.link{background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;text-shadow:none;
+  padding:2px 4px;border-radius:6px;color:var(--text);text-decoration:underline;text-underline-offset:3px;font-weight:500}
+button.link.danger{color:var(--muted)}
+button.link::before,button.link::after{display:none}
+button.link:hover{color:var(--text);background:var(--row-bg)}
+button.link:focus-visible{outline:1.5px solid var(--text);outline-offset:2px}
+
+/* ---------- Fields ---------- */
+input,select,textarea{font:inherit;font-size:.92rem;color:var(--text);background:var(--field-bg);border:1px solid var(--field-border);
+  border-radius:12px;padding:9px 12px;max-width:100%;caret-color:var(--text)}
+input::placeholder,textarea::placeholder{color:var(--faint)}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--track)}
+summary:focus-visible{outline:1.5px solid var(--text);outline-offset:3px;border-radius:4px}
+
+/* ---------- Liquid glass panel (.lgp) ---------- */
+.card,.next-item,dialog{background:var(--pbg);box-shadow:var(--pshadow);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%)}
+.card{border-radius:24px;padding:18px;isolation:isolate}
+.banner{border-radius:16px;padding:12px 14px;margin:12px 0;background:var(--row-bg);border:1px solid var(--row-border);font-size:.9rem}
+.banner.warn{border-color:var(--ember-edge);box-shadow:0 0 24px var(--ember-glow)}
+
+/* ---------- Revise next ---------- */
+.next-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.next-item{display:flex;gap:14px;align-items:center;border-radius:24px;padding:14px 16px 14px 12px;isolation:isolate}
+.next-item .rank{font-family:"Geist Mono",ui-monospace,monospace;font-weight:400;font-size:1.6rem;color:var(--faint);min-width:1.6em;text-align:center}
+.next-item .body{flex:1;min-width:0}
+.next-item .topic{font-weight:500;font-size:1.08rem;overflow-wrap:anywhere;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin:2px 0}
+.next-item .reason{font-size:.88rem;color:var(--muted)}
+
+/* ---------- RAG badges: colour + symbol + word ---------- */
+.rag{display:inline-flex;align-items:center;gap:5px;font-family:"Geist Mono",ui-monospace,monospace;font-size:.7rem;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.rag.red{color:var(--red);background:var(--red-bg)}
+.rag.amber{color:var(--amber);background:var(--amber-bg)}
+.rag.green{color:var(--green);background:var(--green-bg)}
+.tag{font-family:"Geist Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;
+  padding:1px 8px;border-radius:999px;color:var(--faint);border:1px dashed var(--field-border);white-space:nowrap}
+
+/* ---------- Module overview ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.mod-card{display:flex;flex-direction:column;gap:10px}
+.mod-card.behind{box-shadow:var(--pshadow),0 0 0 1px var(--ember-edge),0 14px 40px -6px var(--ember-glow)}
+.mod-card .behind-label{font-weight:500;color:var(--ember);font-size:.84rem}
+.mod-card .ok-label{color:var(--muted);font-size:.84rem}
+.counts{display:flex;gap:6px 8px;flex-wrap:wrap;align-items:center;font-family:"Geist Mono",ui-monospace,monospace;font-size:.85rem}
+.stat{font-size:.88rem;color:var(--muted)}
+.stat b{font-family:"Geist Mono",ui-monospace,monospace;font-weight:500;font-size:1rem;color:var(--text)}
+.bar{height:10px;border-radius:99px;background:var(--track);overflow:hidden;box-shadow:inset 0 0 0 1px var(--row-border)}
+.bar>span{display:block;height:100%;border-radius:99px;background:var(--silver-fill);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.mod-card.behind .bar>span{background:var(--ember-fill);box-shadow:0 0 12px var(--ember-glow)}
+.minrow{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);margin-top:auto;padding-top:8px;border-top:1px solid var(--hair)}
+.minrow input{width:64px;padding:5px 8px;border-radius:10px;font-family:"Geist Mono",ui-monospace,monospace}
+
+/* ---------- Ring pills (glowing progress rings in a glass capsule) ---------- */
+:root{--cobalt:#2f56c9}
+:root[data-theme="dark"]{--cobalt:#6f93ff}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--cobalt:#6f93ff} }
+.rings{display:grid;gap:8px}
+.ring-pill{--rc:var(--muted);position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;
+  padding:7px 16px 7px 7px;border-radius:999px;background:var(--lgbg);box-shadow:var(--lgshadow)}
+.ring-pill.green{--rc:var(--green)} .ring-pill.amber{--rc:var(--amber)} .ring-pill.ember{--rc:var(--ember)} .ring-pill.cobalt{--rc:var(--cobalt)}
+.ring-pill::before{content:"";position:absolute;left:-14px;top:50%;width:84px;height:84px;transform:translateY(-50%);border-radius:50%;
+  background:radial-gradient(circle, var(--rc), transparent 68%);opacity:.22;pointer-events:none}
+.ring{width:46px;height:46px;flex:none;position:relative}
+.ring circle{fill:none;stroke-width:5}
+.ring .trk{stroke:var(--rc);opacity:.16}
+.ring .val{stroke:var(--rc);stroke-linecap:round;filter:drop-shadow(0 0 3px var(--rc));transition:stroke-dasharray .5s cubic-bezier(.2,.8,.2,1)}
+.ring-val{font-size:1.15rem;font-weight:500;letter-spacing:-.01em;line-height:1.15;position:relative}
+.ring-cap{font-size:.74rem;color:var(--muted);line-height:1.3;position:relative}
+
+/* ---------- Usability pass: hierarchy, states, feedback, touch targets ---------- */
+/* Faint text lifted to >= 4.5:1 on the ground */
+:root{--surface-ring:#ffffff}
+:root[data-theme="dark"]{--faint:#8a8a91;--surface-ring:#0d0d0e}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--faint:#8a8a91;--surface-ring:#0d0d0e} }
+/* Quiet buttons: tertiary actions recede so the one primary action leads */
+button.quiet{background:none;box-shadow:inset 0 0 0 1px var(--row-border);backdrop-filter:none;-webkit-backdrop-filter:none;text-shadow:none;color:var(--muted)}
+button.quiet:hover{color:var(--text);background:var(--row-bg)}
+button.quiet.danger{color:var(--red)}
+/* Disabled: visibly muted, no rim, no press */
+button:disabled{opacity:.42;cursor:not-allowed;transform:none}
+button:disabled::before,button:disabled::after{display:none}
+/* Field error: colour + icon + words */
+.field-err{font-size:.82rem;color:var(--red);margin-top:-6px}
+input[aria-invalid="true"]{border-color:var(--red)}
+/* Touch targets: 44px minimum on touch screens */
+@media (pointer:coarse){
+  button{min-height:44px;padding-top:10px;padding-bottom:10px}
+  button.link{min-height:44px;padding:10px 8px}
+  input,select{min-height:44px}
+  .topic-actions button{padding:10px 16px}
+  dialog .rag-pick label{min-height:44px}
+  details summary{padding:10px 0}
+}
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);z-index:50;
+  display:flex;align-items:center;gap:10px;max-width:calc(100vw - 32px);padding:8px 8px 8px 16px;border-radius:999px;font-size:.88rem;
+  background:var(--pbg);box-shadow:var(--pshadow);-webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%);
+  opacity:0;visibility:hidden;transition:opacity .25s cubic-bezier(.2,.7,.2,1),transform .25s cubic-bezier(.2,.7,.2,1),visibility 0s linear .25s;isolation:isolate}
+.toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);transition-delay:0s}
+.toast .ok{color:var(--green);font-weight:700}
+.toast .msg{padding:6px 0;overflow-wrap:anywhere}
+.toast:not(:has(button)){padding-right:18px}
+.toast button{padding:7px 14px}
+@media (prefers-reduced-motion: reduce){ .toast{transition:opacity .2s linear,visibility 0s linear .2s;transform:translate(-50%,0)} }
+
+/* ---------- Tabs ---------- */
+.seg{display:inline-flex;gap:4px;padding:4px;margin-top:18px;border-radius:999px;background:var(--row-bg);border:1px solid var(--row-border);isolation:isolate}
+.seg button{padding:8px 20px}
+.seg button[aria-selected="false"]{background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;color:var(--muted);text-shadow:none}
+.seg button[aria-selected="false"]:hover{color:var(--text)}
+
+/* ---------- Forecast ---------- */
+:root{--s-pace:#c22a10;--s-min:#2f56c9}
+:root[data-theme="dark"]{--s-pace:#f2583a;--s-min:#5f84f2}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--s-pace:#f2583a;--s-min:#5f84f2} }
+.fc-controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-bottom:14px;isolation:isolate}
+.fc-controls .minrow{margin:0;padding:0;border:none}
+.fc-controls select{padding:5px 10px;border-radius:10px;font-family:"Geist Mono",ui-monospace,monospace}
+.fc-controls .check input{accent-color:var(--text);width:16px;height:16px;margin:0}
+.fc-controls #fcRun{margin-left:auto}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+.tile .label{font-size:.84rem;color:var(--muted)}
+.tile .big{font-size:2.4rem;font-weight:300;letter-spacing:-.03em;line-height:1.1;margin:4px 0 2px;display:flex;align-items:center;gap:10px}
+.tile .big .of{font-size:1rem;color:var(--muted);letter-spacing:0}
+.tile .sub{font-size:.8rem;color:var(--faint)}
+.swatch{display:inline-block;width:10px;height:10px;border-radius:3px;flex:none}
+.fc-chart-head{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.chart-wrap{position:relative;touch-action:pan-y}
+.chart-wrap svg{display:block;width:100%;overflow:visible}
+.chart-wrap .ax{font-family:"Geist Mono",ui-monospace,monospace;font-size:10.5px;fill:var(--faint)}
+.chart-wrap .lbl{font-size:12px;fill:var(--text);font-weight:500}
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:0 0 16px}
+.why div{display:grid;gap:2px;padding:12px 14px;border-radius:16px;background:var(--row-bg);border:1px solid var(--row-border);font-size:.86rem}
+.why b{font-weight:500}
+.why span{color:var(--muted)}
+.meaning{margin:0 0 12px;padding:12px 16px;border-radius:16px;border:1px solid var(--ember-edge);box-shadow:0 0 24px var(--ember-glow);font-size:.92rem;max-width:none}
+.meaning b{font-weight:500}
+.meaning:empty{display:none}
+.chart-wrap .plot{fill:var(--plot-bg)}
+.chart-wrap .grid line{stroke:var(--plot-grid);stroke-width:1}
+.chart-wrap .ax-title{font-size:11.5px;fill:var(--muted)}
+.legend-line{display:inline-block;width:18px;height:3px;border-radius:2px;background:var(--text)}
+:root{--plot-bg:rgba(0,0,0,.045);--plot-grid:rgba(255,255,255,.9)}
+:root[data-theme="dark"]{--plot-bg:rgba(255,255,255,.035);--plot-grid:rgba(255,255,255,.07)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--plot-bg:rgba(255,255,255,.035);--plot-grid:rgba(255,255,255,.07)} }
+.chart-wrap .base{stroke:var(--field-border);stroke-width:1}
+.chart-wrap .xh{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.tip{position:absolute;top:0;pointer-events:none;min-width:150px;padding:10px 12px;border-radius:14px;font-size:.8rem;line-height:1.45;
+  background:var(--pbg);box-shadow:var(--pshadow);-webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%);color:var(--text)}
+.tip .t{font-weight:500;margin-bottom:4px}
+.tip .r{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.tip .r b{color:var(--text);font-weight:500;font-family:"Geist Mono",ui-monospace,monospace}
+.mrow{display:grid;grid-template-columns:minmax(90px,150px) 1fr 3.2em;gap:10px;align-items:center;padding:5px 0;font-size:.88rem}
+.mrow .track{height:10px;border-radius:99px;background:var(--track);overflow:hidden}
+.mrow .track span{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--s-pace)}
+.mrow .pct{font-family:"Geist Mono",ui-monospace,monospace;text-align:right}
+.fc-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px}
+.fc-table th,.fc-table td{text-align:right;padding:5px 8px;border-bottom:1px solid var(--hair);font-family:"Geist Mono",ui-monospace,monospace;font-weight:400}
+.fc-table th{color:var(--faint);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.fc-table th:first-child,.fc-table td:first-child{text-align:left}
+.table-scroll{overflow-x:auto}
+
+/* ---------- Topic lists (solid rows inside the glass card) ---------- */
+.module-section{margin-top:14px}
+.module-head{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mh-title{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.mh-actions{width:auto}
+.mh-actions button{padding:6px 12px;font-size:.8rem}
+.add-module{margin-top:14px;display:flex;justify-content:center;isolation:isolate}
+.add-module button{padding:11px 22px}
+.empty-modules{text-align:center;padding:28px 18px}
+.topics{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.topic-row{border:1px solid var(--row-border);border-radius:16px;padding:12px 14px;background:var(--row-bg)}
+.topic-main{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.topic-title{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-weight:500;overflow-wrap:anywhere}
+.topic-meta{font-size:.83rem;color:var(--muted);margin-top:3px}
+.due{color:var(--ember);font-weight:500}
+.topic-actions{display:flex;gap:8px;flex-wrap:wrap;isolation:isolate}
+.topic-actions button{padding:7px 13px;font-size:.82rem}
+details.hist{margin-top:8px;font-size:.86rem}
+details.hist summary{cursor:pointer;color:var(--faint)}
+details.hist summary:hover{color:var(--text)}
+.hist ul{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:4px}
+.hist li{display:flex;gap:8px;align-items:baseline;justify-content:space-between;border-top:1px solid var(--hair);padding:6px 2px}
+.hist li span{overflow-wrap:anywhere}
+.add-topic{display:flex;gap:8px;margin-top:12px;isolation:isolate}
+.add-topic input{flex:1;min-width:0;border-radius:999px;padding-left:16px}
+.empty{color:var(--muted);font-style:italic;padding:6px 2px}
+.next-list .empty{padding:18px;border-radius:24px;background:var(--row-bg);border:1px solid var(--row-border)}
+
+/* ---------- Dialog (hero glass surface) ---------- */
+dialog{border:none;border-radius:28px;color:var(--text);padding:0;width:min(460px,calc(100vw - 32px))}
+dialog::backdrop{background:var(--backdrop);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+dialog form{padding:22px;display:grid;gap:14px;isolation:isolate}
+dialog h3{font-size:1.2rem;font-weight:400}
+dialog label{display:grid;gap:6px;font-size:.86rem;font-weight:500}
+dialog .rag-pick{display:flex;gap:8px;flex-wrap:wrap}
+dialog .rag-pick label{display:flex;align-items:center;gap:8px;border:1px solid var(--row-border);background:var(--row-bg);border-radius:999px;padding:7px 12px 7px 10px;cursor:pointer}
+dialog .rag-pick label:has(input:checked){border-color:var(--text)}
+dialog .rag-pick input{margin:0;accent-color:var(--text)}
+dialog .hint{font-weight:400;color:var(--muted);font-size:.8rem}
+dialog .actions{display:flex;justify-content:flex-end;gap:8px}
+details.how{margin-top:12px}
+details.how summary{cursor:pointer;color:var(--faint);font-size:.88rem}
+details.how summary:hover{color:var(--text)}
+details.how div{font-size:.88rem;color:var(--muted);padding:4px 0 0;max-width:70ch}
+details.how b{color:var(--text);font-weight:500}
+footer{margin:40px 0 12px;font-size:.82rem;color:var(--faint);border-top:1px solid var(--hair);padding-top:14px}
+footer b{color:var(--muted);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  button::before,button::after{animation:none;transition:opacity 200ms linear}
+  button:active::before,button:active::after{--ang:0deg}
+  button,button:active{transform:none}
+  .bar>span{transition:none}
+}
+@media (max-width:560px){
+  input,select,textarea{font-size:16px} /* stops iOS zooming in on focus */
+  .wrap{padding:16px 16px 12px}
+  h1{font-size:1.6rem}
+  .next-item{padding:12px 14px 12px 10px;flex-wrap:wrap}
+  .next-item{gap:10px}
+  .next-item .rank{min-width:1em;font-size:1.3rem}
+  .next-item .body{flex-basis:calc(100% - 44px)}
+  .next-item > button{margin-left:auto}
+  .topic-actions{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Revision tracker.</h1>
+    <div class="toolbar">
+      <button id="btnExport" type="button" class="quiet">Export backup</button>
+      <button id="btnImport" type="button" class="quiet">Import backup</button>
+      <input id="fileImport" type="file" accept=".json,application/json" hidden>
+      <button id="btnTheme" type="button" class="quiet" aria-label="Change colour theme">Theme: Auto</button>
+    </div>
+  </header>
+  <div class="small muted" id="backupInfo"></div>
+  <div id="banners"></div>
+
+  <nav class="seg" role="tablist" aria-label="View">
+    <button type="button" role="tab" id="tabTracker" data-view="tracker" aria-controls="viewTracker">Tracker</button>
+    <button type="button" role="tab" id="tabForecast" data-view="forecast" aria-controls="viewForecast">Forecast</button>
+  </nav>
+
+  <div id="viewTracker" role="tabpanel" aria-labelledby="tabTracker">
+  <section aria-labelledby="hNext">
+    <h2 id="hNext">Revise next.</h2>
+    <ol class="next-list" id="nextList"></ol>
+    <details class="how">
+      <summary>How is this worked out?</summary>
+      <div>
+        <p><b>Why it matters.</b> You forget what you don't go back to. Leave a topic too long and you're not revising it any more, you're relearning it. Pile up enough of those and you end up cramming the night before, stressed, and losing marks on questions you once could do.</p>
+        <p><b>When a topic is due.</b> Red topics need you back after 3 days, Amber after 7, Green after 14. Shakier topics fade faster, so they come round sooner. A topic you've never revised is always due.</p>
+        <p><b>What comes first.</b> The longer a topic has been overdue, and the weaker it is, the higher it ranks. Red counts 3×, Amber 2×, Green 1×.</p>
+        <p><b>No module left behind.</b> If a module hasn't had its weekly minimum yet (weeks start Monday), its topics get pushed up the list, even ones that aren't due yet.</p>
+      </div>
+    </details>
+  </section>
+
+  <section aria-labelledby="hMods">
+    <h2 id="hMods">Modules this week. <span class="cap" id="weekLabel"></span></h2>
+    <div class="grid" id="modGrid"></div>
+  </section>
+
+  <section aria-labelledby="hTopics">
+    <h2 id="hTopics">Topics.</h2>
+    <div id="exampleBar"></div>
+    <div id="moduleSections"></div>
+    <div class="add-module"><button type="button" data-action="addModule">+ Add module</button></div>
+  </section>
+  </div>
+
+  <div id="viewForecast" role="tabpanel" aria-labelledby="tabForecast" hidden>
+    <section aria-labelledby="hFc">
+      <h2 id="hFc">If nothing changes. <span class="cap">Monte Carlo forecast</span></h2>
+      <p class="muted small" style="margin:-4px 0 14px;max-width:70ch">What happens if you keep revising the way you have for the last 4 weeks? This plays out the next few weeks a thousand times, with good days and bad days, so you can see where you're likely to end up.</p>
+      <div class="why">
+        <div><b>Overdue = forgetting.</b><span>A topic you leave too long fades. Coming back to it means relearning, not revising.</span></div>
+        <div><b>Forgetting = cramming.</b><span>The backlog doesn't go away. It lands on you in the last week before the exam.</span></div>
+        <div><b>Cramming = stress and lost marks.</b><span>Too much to relearn in too little time, and the questions you once could do are the ones you drop.</span></div>
+      </div>
+      <div class="fc-controls">
+        <label class="minrow">Weeks ahead
+          <select id="fcWeeks"><option value="4">4</option><option value="8" selected>8</option><option value="12">12</option></select>
+        </label>
+        <label class="minrow">Runs
+          <select id="fcRuns"><option value="500">500</option><option value="1000" selected>1,000</option><option value="2000">2,000</option></select>
+        </label>
+        <label class="minrow check"><input type="checkbox" id="fcCompare" checked> Compare with hitting every weekly minimum</label>
+        <button type="button" id="fcRun" class="primary">Run again</button>
+      </div>
+      <div class="tiles" id="fcTiles"></div>
+      <p class="meaning" id="fcMeaning"></p>
+      <div class="card fc-chart-card">
+        <div class="fc-chart-head">
+          <h3 id="fcTitle">Total days overdue, run by run.</h3>
+          <div class="legend" id="fcLegend"></div>
+        </div>
+        <div class="chart-wrap" id="fcChart"></div>
+        <div class="cap" id="fcCaption" style="margin-top:8px"></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3>Chance each module is behind its weekly minimum.</h3>
+        <p class="small muted" style="margin:4px 0 12px">Share of simulated weeks where the module gets fewer sessions than its minimum, at your current pace.</p>
+        <div id="fcModules"></div>
+      </div>
+      <details class="how">
+        <summary>Show the numbers as a table</summary>
+        <div id="fcTable"></div>
+      </details>
+      <details class="how">
+        <summary>How does the simulation work?</summary>
+        <div>
+          <p><b>It copies your habits.</b> It looks at how often you've studied each module in the last 4 weeks and keeps you at that pace, with some random busy days and lazy days thrown in.</p>
+          <p><b>You get better when you revise.</b> A session sometimes moves a topic up a level (Red to Amber, Amber to Green). It doesn't always, just like real revision.</p>
+          <p><b>You get worse when you don't.</b> Leave a topic for twice its due gap and it starts slipping back down a level.</p>
+          <p><b>"Days overdue"</b> adds up how late every topic is. 3 topics each 5 days late = 15 days overdue. It's a rough measure of how much relearning is piling up.</p>
+          <p><b>The blue line</b> is the same you, except you always hit each module's weekly minimum. Nothing else changes, so the gap between the lines is what those minimums are worth.</p>
+          <p>It's a rough model to motivate you, not a crystal ball. The more sessions you log, the better it knows you.</p>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <footer>
+    Data is saved in this browser only. Use <b>Export backup</b> regularly and keep the file somewhere safe (OneDrive, email to yourself, etc.).
+  </footer>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Log session dialog -->
+<dialog id="dlgLog">
+  <form method="dialog" id="formLog">
+    <div>
+      <h3 id="logTitle">Log session</h3>
+      <div class="small muted" id="logSub"></div>
+    </div>
+    <label>Minutes spent
+      <input type="number" name="minutes" id="logMinutes" min="1" max="1000" step="1" inputmode="numeric" required aria-describedby="logErr">
+    </label>
+    <div class="field-err" id="logErr" role="alert" hidden><span aria-hidden="true">⚠</span> Enter a whole number of minutes from 1 to 1000.</div>
+    <fieldset style="border:none;padding:0;margin:0;display:grid;gap:6px">
+      <legend style="font-size:.9rem;font-weight:600;padding:0;margin-bottom:4px">How confident are you now?</legend>
+      <div class="rag-pick">
+        <label><input type="radio" name="conf" value="red"> <span class="rag red">✕ Red</span></label>
+        <label><input type="radio" name="conf" value="amber"> <span class="rag amber">~ Amber</span></label>
+        <label><input type="radio" name="conf" value="green"> <span class="rag green">✓ Green</span></label>
+      </div>
+      <div class="hint">Red: can't do an unseen question. Amber: can with notes or slowly. Green: can do an unseen question cold.</div>
+    </fieldset>
+    <label>Note <span class="hint">(optional)</span>
+      <textarea name="note" id="logNote" rows="3" placeholder="e.g. Did past paper Q3, stuck on sign convention"></textarea>
+    </label>
+    <div class="actions">
+      <button type="button" data-close>Cancel</button>
+      <button type="submit" class="primary" value="save" id="logSave" disabled>Save session</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Add / rename module dialog -->
+<dialog id="dlgModule">
+  <form method="dialog" id="formModule">
+    <h3 id="modTitle">Add module</h3>
+    <label>Module name
+      <input type="text" name="name" id="modName" maxlength="80" placeholder="e.g. Thermodynamics" required aria-describedby="modErr">
+    </label>
+    <div class="field-err" id="modErr" role="alert" hidden><span aria-hidden="true">⚠</span> <span id="modErrText"></span></div>
+    <label>Weekly minimum sessions
+      <input type="number" name="min" id="modMin" min="0" max="50" step="1" inputmode="numeric" value="2">
+      <span class="hint">How many sessions a week this module needs so it doesn't fall behind.</span>
+    </label>
+    <div class="actions">
+      <button type="button" data-close>Cancel</button>
+      <button type="submit" class="primary" id="modSave" disabled>Add module</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Edit topic dialog -->
+<dialog id="dlgEdit">
+  <form method="dialog" id="formEdit">
+    <h3>Edit topic</h3>
+    <label>Topic name
+      <input type="text" name="name" id="editName" maxlength="120" required>
+    </label>
+    <fieldset style="border:none;padding:0;margin:0">
+      <legend style="font-size:.9rem;font-weight:600;padding:0;margin-bottom:4px">Confidence</legend>
+      <div class="rag-pick">
+        <label><input type="radio" name="conf" value="red"> <span class="rag red">✕ Red</span></label>
+        <label><input type="radio" name="conf" value="amber"> <span class="rag amber">~ Amber</span></label>
+        <label><input type="radio" name="conf" value="green"> <span class="rag green">✓ Green</span></label>
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button type="button" data-close>Cancel</button>
+      <button type="submit" class="primary" value="save">Save changes</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Settings (tweak here if you like) ---------- */
+const STORE_KEY = 'revisionTracker.v1';
+const PREF_KEY  = 'revisionTracker.prefs';
+const DUE_AFTER = { red:3, amber:7, green:14 };   // days
+const WEIGHT    = { red:3, amber:2, green:1 };
+const NEVER_REVISED_OVERDUE = 7;                   // days overdue assumed for never-revised topics
+const LABEL     = { red:'Red', amber:'Amber', green:'Green' };
+const SYMBOL    = { red:'✕', amber:'~', green:'✓' };
+
+/* ---------- Date helpers (local dates as YYYY-MM-DD) ---------- */
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function parse(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function today(){ return ymd(new Date()); }
+function addDays(s,n){ const d=parse(s); d.setDate(d.getDate()+n); return ymd(d); }
+function daysBetween(a,b){ // b - a in whole days
+  const A=parse(a), B=parse(b);
+  return Math.round((Date.UTC(B.getFullYear(),B.getMonth(),B.getDate())-Date.UTC(A.getFullYear(),A.getMonth(),A.getDate()))/864e5);
+}
+function weekStart(s){ const d=parse(s); d.setDate(d.getDate()-((d.getDay()+6)%7)); return ymd(d); }
+function fmtDate(s){ return parse(s).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); }
+function plural(n,w){ return n+' '+w+(n===1?'':'s'); }
+function uid(){ return Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4); }
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- Storage ---------- */
+// In the iOS app, a native file in the app's Documents folder is the source of truth
+// (window.__nativeStore is injected before this script runs); localStorage is the fallback.
+const native = (window.webkit && window.webkit.messageHandlers) || null;
+const nativeStore = (typeof window.__nativeStore === 'object' && window.__nativeStore) || null;
+let storageOK = true;
+function loadRaw(key){
+  if(nativeStore && typeof nativeStore[key]==='string') return nativeStore[key];
+  try{ return localStorage.getItem(key); }catch(e){ if(!native||!native.store) storageOK=false; return null; }
+}
+function saveRaw(key,val){
+  let ok=false;
+  if(native && native.store){ try{ native.store.postMessage({key:key,value:val}); if(nativeStore) nativeStore[key]=val; ok=true; }catch(e){} }
+  try{ localStorage.setItem(key,val); ok=true; }catch(e){ if(!ok) storageOK=false; }
+  return ok;
+}
+
+let prefs = {};
+try{ prefs = JSON.parse(loadRaw(PREF_KEY)||'{}')||{}; }catch(e){ prefs={}; }
+function savePrefs(){ saveRaw(PREF_KEY, JSON.stringify(prefs)); }
+
+function exampleData(){
+  const t = today();
+  const mk = (name, conf, daysAgoList, notes) => {
+    const sessions = (daysAgoList||[]).slice().sort((a,b)=>b-a).map((n,i)=>({
+      id:uid(), date:addDays(t,-n), minutes:[30,45,40,25,50,35][i%6], note:(notes&&notes[i])||''
+    }));
+    const last = sessions.length ? sessions[sessions.length-1].date : null;
+    return { id:uid(), name, confidence:conf, lastRevised:last, sessions, example:true };
+  };
+  return {
+    version:1,
+    modules:[
+      { id:uid(), name:'Structures 1', weeklyMin:2, topics:[
+        mk('Shear force & bending moment diagrams','red',[10,5],['','Sign convention still confusing']),
+        mk('Stress & strain','amber',[9,1]),
+        mk('Pin-jointed trusses (method of joints)','green',[20,15]),
+        mk('Free body diagrams & equilibrium','green',[2],['Did 4 tutorial questions cold'])
+      ]},
+      { id:uid(), name:'1M1', weeklyMin:2, topics:[
+        mk('Complex numbers','amber',[12,8]),
+        mk('Matrices & determinants','red',[1],['Need to redo inverse by row reduction']),
+        mk('Integration techniques','red',[])
+      ]},
+      { id:uid(), name:'Fluid Mechanics', weeklyMin:2, topics:[
+        mk('Hydrostatic pressure & forces on surfaces','green',[30,16]),
+        mk('Bernoulli equation','red',[11]),
+        mk('Continuity & flow rate','amber',[6])
+      ]},
+      { id:uid(), name:'Engineering Systems', weeklyMin:2, topics:[
+        mk('DC circuit analysis','green',[4,0]),
+        mk('Operational amplifiers','amber',[3,1]),
+        mk('First-order system response','red',[6])
+      ]}
+    ]
+  };
+}
+
+function normalise(data){
+  if(!data || !Array.isArray(data.modules)) throw new Error('This file does not look like a Revision Tracker backup.');
+  const okConf = c => (c==='red'||c==='amber'||c==='green') ? c : 'red';
+  const okDate = d => (typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) ? d : null;
+  return {
+    version:1,
+    modules:data.modules.map(m=>({
+      id:String(m.id||uid()),
+      name:String(m.name||'Untitled module'),
+      weeklyMin:Math.max(0,Math.min(50,parseInt(m.weeklyMin,10)||0)),
+      topics:(Array.isArray(m.topics)?m.topics:[]).map(tp=>({
+        id:String(tp.id||uid()),
+        name:String(tp.name||'Untitled topic'),
+        confidence:okConf(tp.confidence),
+        lastRevised:okDate(tp.lastRevised),
+        example:!!tp.example,
+        sessions:(Array.isArray(tp.sessions)?tp.sessions:[]).filter(s=>okDate(s.date)).map(s=>({
+          id:String(s.id||uid()), date:s.date, minutes:Math.max(0,Math.round(Number(s.minutes)||0)), note:String(s.note||'')
+        }))
+      }))
+    }))
+  };
+}
+
+let state;
+(function init(){
+  const raw = loadRaw(STORE_KEY);
+  if(raw){
+    try{ state = normalise(JSON.parse(raw)); }
+    catch(e){ state = exampleData(); }
+  } else {
+    state = exampleData();
+  }
+})();
+function save(){ saveRaw(STORE_KEY, JSON.stringify(state)); }
+save();
+
+/* ---------- Core logic ---------- */
+function moduleWeek(m, t){
+  const ws = weekStart(t);
+  let sessions=0, minutes=0;
+  for(const tp of m.topics) for(const s of tp.sessions){
+    if(s.date>=ws && s.date<=t){ sessions++; minutes+=s.minutes; }
+  }
+  return { sessions, minutes, behind: sessions < m.weeklyMin };
+}
+
+function topicStatus(tp, t){
+  const thr = DUE_AFTER[tp.confidence];
+  if(!tp.lastRevised) return { never:true, due:true, daysSince:null, overdue:NEVER_REVISED_OVERDUE, dueIn:0 };
+  const daysSince = Math.max(0, daysBetween(tp.lastRevised, t));
+  const due = daysSince >= thr;
+  return { never:false, due, daysSince, overdue: due ? daysSince - thr + 1 : 0, dueIn: due ? 0 : thr - daysSince };
+}
+
+function reviseNext(t){
+  const out=[];
+  for(const m of state.modules){
+    const wk = moduleWeek(m,t);
+    for(const tp of m.topics){
+      const st = topicStatus(tp,t);
+      const w = WEIGHT[tp.confidence];
+      let score = st.overdue * w;
+      if(wk.behind) score = score*2 + 2*w;
+      if(!st.due && !wk.behind) continue;
+      out.push({ m, tp, st, wk, score });
+    }
+  }
+  out.sort((a,b)=> b.score-a.score
+    || WEIGHT[b.tp.confidence]-WEIGHT[a.tp.confidence]
+    || (b.st.never?9999:b.st.daysSince)-(a.st.never?9999:a.st.daysSince)
+    || a.tp.name.localeCompare(b.tp.name));
+  return out.slice(0,3);
+}
+
+function reasonText(x){
+  const c = LABEL[x.tp.confidence];
+  let r;
+  if(x.st.never) r = c+', never revised';
+  else if(x.st.due) r = c+', '+plural(x.st.daysSince,'day')+' since last revised';
+  else r = c+', revised '+(x.st.daysSince===0?'today':plural(x.st.daysSince,'day')+' ago')+' (not due yet)';
+  if(x.wk.behind) r += ' · module behind: '+x.wk.sessions+'/'+x.m.weeklyMin+' sessions this week';
+  return r;
+}
+
+/* ---------- Rendering ---------- */
+const $ = id => document.getElementById(id);
+function ragBadge(c){ return '<span class="rag '+c+'"><span aria-hidden="true">'+SYMBOL[c]+'</span> '+LABEL[c]+'</span>'; }
+
+function render(){
+  const t = today();
+  // banners
+  let b='';
+  if(!storageOK) b += '<div class="banner warn"><b>Warning:</b> this browser is blocking local storage, so changes will be lost when you close the page. Use Export backup before closing, or open the file in Chrome, Edge or Firefox.</div>';
+  $('banners').innerHTML = b;
+  $('backupInfo').textContent = prefs.lastExport ? 'Last backup exported: '+fmtDate(prefs.lastExport)+(daysBetween(prefs.lastExport,t)>=7?' — time for a new one':'') : 'No backup exported yet from this browser.';
+
+  // Revise next
+  const next = reviseNext(t);
+  $('nextList').innerHTML = next.length ? next.map((x,i)=>
+    '<li class="next-item"><div class="rank" aria-hidden="true">'+(i+1)+'</div><div class="body">'+
+      '<div class="cap">'+esc(x.m.name)+'</div>'+
+      '<div class="topic">'+esc(x.tp.name)+' '+ragBadge(x.tp.confidence)+(x.tp.example?' <span class="tag">Example</span>':'')+'</div>'+
+      '<div class="reason">'+esc(reasonText(x))+'</div>'+
+    '</div><button type="button"'+(i===0?' class="primary"':'')+' data-action="log" data-m="'+x.m.id+'" data-t="'+x.tp.id+'" aria-label="Log session for '+esc(x.tp.name)+'">Log session</button></li>'
+  ).join('') : !state.modules.some(m=>m.topics.length) ? '<li class="empty">Add a module and some topics below, and this will tell you what to revise first.</li>' : '<li class="empty">Nothing is due and every module has met its weekly minimum. Nice work. Add topics below or come back tomorrow.</li>';
+
+  // Week label
+  const ws = weekStart(t);
+  $('weekLabel').textContent = '(week starting '+fmtDate(ws)+')';
+
+  // Module cards
+  const totalWeekMin = state.modules.reduce((n,m)=>n+moduleWeek(m,t).minutes,0);
+  $('modGrid').innerHTML = state.modules.map(m=>{
+    const wk = moduleWeek(m,t);
+    const cnt = {red:0,amber:0,green:0};
+    m.topics.forEach(tp=>cnt[tp.confidence]++);
+    const pct = m.weeklyMin ? Math.min(100, Math.round(wk.sessions/m.weeklyMin*100)) : 100;
+    return '<div class="card mod-card'+(wk.behind?' behind':'')+'">'+
+      '<h3><a href="#sec-'+m.id+'" style="color:inherit">'+esc(m.name)+'</a></h3>'+
+      (wk.behind ? '<div class="behind-label">⚠ Behind: '+(m.weeklyMin-wk.sessions)+' more session'+(m.weeklyMin-wk.sessions===1?'':'s')+' needed this week</div>'
+                 : '<div class="ok-label">✓ Weekly minimum met</div>')+
+      '<div class="counts">'+ragBadge('red')+' <b>'+cnt.red+'</b> '+ragBadge('amber')+' <b>'+cnt.amber+'</b> '+ragBadge('green')+' <b>'+cnt.green+'</b></div>'+
+      '<div class="stat">Sessions: <b>'+wk.sessions+'</b> / '+m.weeklyMin+'</div>'+
+      '<div class="bar" role="img" aria-label="'+wk.sessions+' of '+m.weeklyMin+' sessions"><span style="width:'+pct+'%"></span></div>'+
+      ringPills(m,wk,t,totalWeekMin)+
+      '<label class="minrow">Weekly minimum <input type="number" min="0" max="50" value="'+m.weeklyMin+'" data-action="weeklyMin" data-m="'+m.id+'" aria-label="Weekly minimum sessions for '+esc(m.name)+'"></label>'+
+    '</div>';
+  }).join('');
+
+  // Example bar
+  const exCount = state.modules.reduce((n,m)=>n+m.topics.filter(tp=>tp.example).length,0);
+  $('exampleBar').innerHTML = exCount ? '<div class="banner">The topics marked <span class="tag">Example</span> are sample data so you can see the app working. Delete them one by one, or <button type="button" class="link" data-action="clearExamples">delete all '+exCount+' examples</button>.</div>' : '';
+
+  // Module topic sections
+  $('moduleSections').innerHTML = state.modules.map(m=>{
+    const topics = m.topics.slice().sort((a,b)=>a.name.localeCompare(b.name));
+    return '<div class="card module-section" id="sec-'+m.id+'">'+
+      '<div class="module-head"><div class="mh-title"><h3>'+esc(m.name)+'</h3><span class="cap">'+plural(m.topics.length,'topic')+'</span></div>'+
+        '<div class="topic-actions mh-actions">'+
+          '<button type="button" class="quiet" data-action="editModule" data-m="'+m.id+'" aria-label="Rename '+esc(m.name)+'">Rename</button>'+
+          '<button type="button" class="quiet danger" data-action="delModule" data-m="'+m.id+'" aria-label="Delete module '+esc(m.name)+'">Delete module</button>'+
+        '</div></div>'+
+      (topics.length ? '<ul class="topics">'+topics.map(tp=>topicRow(m,tp,t)).join('')+'</ul>' : '<div class="empty">No topics yet. Add your first one below.</div>')+
+      '<form class="add-topic" data-action="addTopic" data-m="'+m.id+'"><input type="text" name="name" maxlength="120" placeholder="New topic name" aria-label="New topic for '+esc(m.name)+'" required><button type="submit">Add topic</button></form>'+
+    '</div>';
+  }).join('') + (state.modules.length ? '' : '<div class="card empty-modules"><h3>No modules yet.</h3><p class="small muted">Add the modules you’re revising for, then add topics to each one.</p></div>');
+  if(!state.modules.length) $('modGrid').innerHTML = '<div class="empty">No modules yet. Add one in the Topics section below.</div>';
+
+  // theme button
+  const th = prefs.theme||'auto';
+  $('btnTheme').textContent = 'Theme: '+th.charAt(0).toUpperCase()+th.slice(1);
+}
+
+/* Ring pills: when the module was last studied, and how long this week */
+const FRESH_SPAN = 14; // days until the "last studied" ring is empty
+function ringSvg(frac, cls){
+  const r=18, c=2*Math.PI*r, f=Math.max(0,Math.min(1,frac));
+  return '<svg class="ring '+cls+'" viewBox="0 0 48 48" aria-hidden="true">'+
+    '<circle class="trk" cx="24" cy="24" r="'+r+'"/>'+
+    (f>0 ? '<circle class="val" cx="24" cy="24" r="'+r+'" stroke-dasharray="'+(c*f).toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 24 24)"/>' : '')+
+  '</svg>';
+}
+function ringPills(m,wk,t,totalWeekMin){
+  const last = m.topics.map(tp=>tp.lastRevised).filter(Boolean).sort().pop() || null;
+  const days = last ? Math.max(0,daysBetween(last,t)) : null;
+  const fresh = last ? 1 - days/FRESH_SPAN : 0;
+  const fcls = days===null || days>7 ? 'ember' : days>3 ? 'amber' : 'green';
+  const fval = days===null ? 'Never' : days===0 ? 'Today' : days===1 ? 'Yesterday' : days+' days ago';
+  const fcap = days===null ? 'Not studied yet' : 'Last studied · '+fmtDate(last);
+  const share = totalWeekMin ? wk.minutes/totalWeekMin : 0;
+  const mcls = wk.behind ? 'ember' : 'cobalt';
+  return '<div class="rings">'+
+    '<div class="ring-pill '+fcls+'" role="img" aria-label="'+esc(m.name)+' last studied: '+fval+'">'+ringSvg(fresh,fcls)+
+      '<div><div class="ring-val">'+fval+'</div><div class="ring-cap">'+fcap+'</div></div></div>'+
+    '<div class="ring-pill '+mcls+'" role="img" aria-label="'+wk.minutes+' minutes this week, '+Math.round(share*100)+' percent of all study time">'+ringSvg(share,mcls)+
+      '<div><div class="ring-val">'+wk.minutes+' min</div><div class="ring-cap">This week · '+Math.round(share*100)+'% of all study</div></div></div>'+
+  '</div>';
+}
+
+function topicRow(m,tp,t){
+  const st = topicStatus(tp,t);
+  let when;
+  if(st.never) when = 'Never revised';
+  else when = 'Last revised '+(st.daysSince===0?'today':st.daysSince===1?'yesterday':st.daysSince+' days ago')+' ('+fmtDate(tp.lastRevised)+')';
+  const dueTxt = st.due ? '<span class="due">Due now</span>' : 'Due in '+plural(st.dueIn,'day');
+  const totalMin = tp.sessions.reduce((n,s)=>n+s.minutes,0);
+  const hist = tp.sessions.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  return '<li class="topic-row">'+
+    '<div class="topic-main"><div>'+
+      '<div class="topic-title">'+esc(tp.name)+' '+ragBadge(tp.confidence)+(tp.example?' <span class="tag">Example</span>':'')+'</div>'+
+      '<div class="topic-meta">'+when+' · '+dueTxt+'</div>'+
+    '</div><div class="topic-actions">'+
+      '<button type="button" data-action="log" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Log session for '+esc(tp.name)+'">Log session</button>'+
+      '<button type="button" class="quiet" data-action="edit" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Edit '+esc(tp.name)+'">Edit</button>'+
+      '<button type="button" class="quiet danger" data-action="delTopic" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Delete '+esc(tp.name)+'">Delete</button>'+
+    '</div></div>'+
+    '<details class="hist"><summary>Session history ('+plural(tp.sessions.length,'session')+', '+totalMin+' min)</summary>'+
+      (hist.length ? '<ul>'+hist.map(s=>'<li><span>'+fmtDate(s.date)+' · '+s.minutes+' min'+(s.note?' · '+esc(s.note):'')+'</span>'+
+        '<button type="button" class="link danger" data-action="delSession" data-m="'+m.id+'" data-t="'+tp.id+'" data-s="'+s.id+'" aria-label="Delete this session">Remove</button></li>').join('')+'</ul>'
+        : '<div class="empty">No sessions logged yet.</div>')+
+    '</details>'+
+  '</li>';
+}
+
+/* ---------- Theme ---------- */
+function applyTheme(){
+  const th = prefs.theme||'auto';
+  if(th==='auto') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme',th);
+}
+applyTheme();
+
+/* ---------- Lookups ---------- */
+function findModule(id){ return state.modules.find(m=>m.id===id); }
+function findTopic(mid,tid){ const m=findModule(mid); return m ? m.topics.find(tp=>tp.id===tid) : null; }
+
+/* ---------- Dialogs ---------- */
+/* ---------- Modules: add, rename, delete ---------- */
+let editingModule = null; // module id when renaming, null when adding
+function openModule(mid){
+  const m = mid ? findModule(mid) : null;
+  editingModule = m ? m.id : null;
+  $('modTitle').textContent = m ? 'Rename module' : 'Add module';
+  $('modName').value = m ? m.name : '';
+  $('modMin').value = m ? m.weeklyMin : 2;
+  validateModule();
+  $('dlgModule').showModal(); $('modName').focus();
+}
+function validateModule(){
+  const name=$('modName').value.trim(), min=$('modMin').value.trim(), n=Number(min);
+  const dup = name && state.modules.some(m=>m.id!==editingModule && m.name.toLowerCase()===name.toLowerCase());
+  const minOk = min!=='' && Number.isInteger(n) && n>=0 && n<=50;
+  let err='';
+  if(dup) err='You already have a module called "'+name+'".';
+  else if(!minOk && min!=='') err='Weekly minimum must be a whole number from 0 to 50.';
+  $('modErr').hidden=!err; $('modErrText').textContent=err;
+  $('modName').setAttribute('aria-invalid', String(dup));
+  const ok = !!name && !dup && minOk;
+  $('modSave').disabled=!ok;
+  $('modSave').textContent = editingModule ? 'Save changes' : (name && ok ? 'Add "'+name+'"' : 'Add module');
+  return ok;
+}
+$('modName').addEventListener('input',validateModule);
+$('modMin').addEventListener('input',validateModule);
+$('formModule').addEventListener('submit',e=>{
+  e.preventDefault();
+  if(!validateModule()) return;
+  const name=$('modName').value.trim(), min=Number($('modMin').value);
+  if(editingModule){
+    const m=findModule(editingModule); const old=m.name; m.name=name; m.weeklyMin=min;
+    save(); render(); $('dlgModule').close();
+    toast(old===name ? 'Saved "'+name+'"' : 'Renamed "'+old+'" to "'+name+'"');
+  } else {
+    const m={ id:uid(), name, weeklyMin:min, topics:[] };
+    state.modules.push(m); save(); render(); $('dlgModule').close();
+    toast('Added module "'+name+'"');
+    const inp=document.querySelector('form.add-topic[data-m="'+m.id+'"] input');
+    if(inp){ inp.scrollIntoView({block:'center',behavior:'smooth'}); inp.focus({preventScroll:true}); }
+  }
+});
+
+let current = null; // {mid, tid}
+function openLog(mid,tid){
+  const tp = findTopic(mid,tid), m = findModule(mid); if(!tp) return;
+  current = {mid,tid};
+  $('logTitle').textContent = 'Log session: '+tp.name;
+  $('logSub').textContent = m.name+' · today, '+fmtDate(today());
+  $('logMinutes').value = '';
+  $('logNote').value = '';
+  $('formLog').querySelectorAll('input[name=conf]').forEach(r=>r.checked = r.value===tp.confidence);
+  validateLog();
+  $('dlgLog').showModal();
+  $('logMinutes').focus();
+}
+function openEdit(mid,tid){
+  const tp = findTopic(mid,tid); if(!tp) return;
+  current = {mid,tid};
+  $('editName').value = tp.name;
+  $('formEdit').querySelectorAll('input[name=conf]').forEach(r=>r.checked = r.value===tp.confidence);
+  $('dlgEdit').showModal();
+  $('editName').focus();
+}
+document.querySelectorAll('dialog [data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
+
+$('formLog').addEventListener('submit',e=>{
+  e.preventDefault();
+  const tp = current && findTopic(current.mid,current.tid); if(!tp) return;
+  if(!validateLog()){ $('logMinutes').focus(); return; }
+  const minutes = Number($('logMinutes').value);
+  const conf = ($('formLog').querySelector('input[name=conf]:checked')||{}).value || tp.confidence;
+  const t = today();
+  tp.sessions.push({ id:uid(), date:t, minutes, note:$('logNote').value.trim() });
+  tp.lastRevised = t;
+  tp.confidence = conf;
+  save(); render();
+  $('dlgLog').close();
+  toast('Logged '+minutes+' min on "'+tp.name+'" · '+LABEL[conf]);
+});
+$('formEdit').addEventListener('submit',e=>{
+  e.preventDefault();
+  const tp = current && findTopic(current.mid,current.tid); if(!tp) return;
+  const name = $('editName').value.trim(); if(!name){ $('editName').focus(); return; }
+  tp.name = name;
+  const conf = ($('formEdit').querySelector('input[name=conf]:checked')||{}).value;
+  if(conf) tp.confidence = conf;
+  save(); render();
+  $('dlgEdit').close();
+  toast('Saved "'+tp.name+'"');
+});
+
+/* ---------- Toast: confirms every action, offers Undo for destructive ones ---------- */
+function snapshot(){ return JSON.stringify(state); }
+let toastTimer=null;
+function toast(msg, undoSnap){
+  const el=$('toast');
+  el.innerHTML='<span class="ok" aria-hidden="true">✓</span><span class="msg">'+esc(msg)+'</span>'+(undoSnap?'<button type="button" id="toastUndo">Undo</button>':'');
+  el.classList.add('show');
+  if(undoSnap) $('toastUndo').addEventListener('click',()=>{ state=JSON.parse(undoSnap); save(); render(); toast('Undone'); });
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'), undoSnap?6000:2800);
+}
+
+/* ---------- Log form validation: Save stays disabled until minutes are valid ---------- */
+function validateLog(){
+  const v=$('logMinutes').value.trim(), n=Number(v), ok = v!=='' && Number.isInteger(n) && n>=1 && n<=1000;
+  $('logSave').disabled=!ok;
+  $('logErr').hidden = ok || v==='';
+  $('logMinutes').setAttribute('aria-invalid', String(!ok && v!==''));
+  $('logSave').textContent = ok ? 'Save '+n+' min session' : 'Save session';
+  return ok;
+}
+$('logMinutes').addEventListener('input',validateLog);
+
+/* ---------- Event delegation ---------- */
+document.addEventListener('click',e=>{
+  const el = e.target.closest('[data-action]'); if(!el || el.tagName==='FORM' || el.tagName==='INPUT') return;
+  const {action, m:mid, t:tid, s:sid} = el.dataset;
+  if(action==='log') openLog(mid,tid);
+  else if(action==='edit') openEdit(mid,tid);
+  else if(action==='delTopic'){
+    const m=findModule(mid), tp=findTopic(mid,tid); if(!tp) return;
+    const snap=snapshot();
+    m.topics = m.topics.filter(x=>x.id!==tid); save(); render();
+    toast('Deleted "'+tp.name+'"', snap);
+  }
+  else if(action==='delSession'){
+    const tp=findTopic(mid,tid); if(!tp) return;
+    const snap=snapshot();
+    tp.sessions = tp.sessions.filter(s=>s.id!==sid);
+    tp.lastRevised = tp.sessions.length ? tp.sessions.map(s=>s.date).sort().pop() : null;
+    save(); render();
+    toast('Session removed from "'+tp.name+'"', snap);
+  }
+  else if(action==='addModule') openModule(null);
+  else if(action==='editModule') openModule(mid);
+  else if(action==='delModule'){
+    const m=findModule(mid); if(!m) return;
+    const snap=snapshot();
+    state.modules = state.modules.filter(x=>x.id!==mid); save(); render();
+    toast('Deleted "'+m.name+'"'+(m.topics.length?' and its '+plural(m.topics.length,'topic'):''), snap);
+  }
+  else if(action==='clearExamples'){
+    const snap=snapshot();
+    const n=state.modules.reduce((k,m)=>k+m.topics.filter(tp=>tp.example).length,0);
+    state.modules.forEach(m=>m.topics=m.topics.filter(tp=>!tp.example)); save(); render();
+    toast('Deleted '+plural(n,'example topic'), snap);
+  }
+});
+document.addEventListener('submit',e=>{
+  const f = e.target; if(f.dataset.action!=='addTopic') return;
+  e.preventDefault();
+  const m = findModule(f.dataset.m); const name = f.elements.name.value.trim();
+  if(!m || !name) return;
+  m.topics.push({ id:uid(), name, confidence:'red', lastRevised:null, sessions:[], example:false });
+  save(); render();
+  const again = document.querySelector('form.add-topic[data-m="'+m.id+'"] input'); if(again) again.focus();
+  toast('Added "'+name+'" to '+m.name+' as Red');
+});
+document.addEventListener('change',e=>{
+  const el=e.target; if(el.dataset.action!=='weeklyMin') return;
+  const m=findModule(el.dataset.m); if(!m) return;
+  m.weeklyMin = Math.max(0,Math.min(50,parseInt(el.value,10)||0));
+  save(); render();
+});
+
+/* ---------- Export / Import ---------- */
+$('btnExport').addEventListener('click',()=>{
+  const json = JSON.stringify({...state, exportedAt:new Date().toISOString()},null,2);
+  const filename = 'revision-tracker-backup-'+today()+'.json';
+  if(native && native.exportBackup){
+    // iOS app: hand the file to the native share sheet (Save to Files, AirDrop, Mail...)
+    native.exportBackup.postMessage({filename:filename, json:json});
+    prefs.lastExport = today(); savePrefs(); render();
+    return;
+  }
+  const blob = new Blob([json],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  prefs.lastExport = today(); savePrefs(); render();
+  toast('Backup downloaded: '+filename);
+});
+$('btnImport').addEventListener('click',()=>$('fileImport').click());
+$('fileImport').addEventListener('change',e=>{
+  const file = e.target.files[0]; e.target.value=''; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = normalise(JSON.parse(reader.result));
+      const nT = data.modules.reduce((n,m)=>n+m.topics.length,0);
+      if(confirm('Replace everything currently in the app with this backup ('+plural(data.modules.length,'module')+', '+plural(nT,'topic')+')?')){
+        const snap=snapshot();
+        state = data; save(); render();
+        toast('Backup imported: '+plural(nT,'topic'), snap);
+      }
+    }catch(err){ alert('Could not import: '+err.message); }
+  };
+  reader.readAsText(file);
+});
+
+$('btnTheme').addEventListener('click',()=>{
+  const order=['auto','light','dark'];
+  prefs.theme = order[(order.indexOf(prefs.theme||'auto')+1)%3];
+  savePrefs(); applyTheme(); render(); drawSpaghetti();
+});
+
+/* ---------- Monte Carlo forecast ---------- */
+const SIM = { lookbackDays:28, pickMostOverdue:0.75, levelUp:[0.40,0.35,0], forgetPerDay:0.03, paths:40 };
+const CONF_IDX = { red:0, amber:1, green:2 };
+const THR = [DUE_AFTER.red, DUE_AFTER.amber, DUE_AFTER.green], WT = [WEIGHT.red, WEIGHT.amber, WEIGHT.green];
+const METRICS = {
+  days:   { name:'Total days overdue', axis:'Days overdue (all topics)', unit:n=>plural(n,'day')+' overdue', short:'days overdue' },
+  topics: { name:'Topics overdue',     axis:'Topics overdue',            unit:n=>plural(n,'topic')+' overdue', short:'topics overdue' }
+};
+
+function mulberry32(seed){ let a=seed>>>0; return ()=>{ a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+function randNormal(r){ let u=0,v=0; while(!u) u=r(); while(!v) v=r(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function randGamma(k,r){ // Marsaglia–Tsang, scale 1
+  if(k<1) return randGamma(k+1,r)*Math.pow(r(),1/k);
+  const d=k-1/3, c=1/Math.sqrt(9*d);
+  for(;;){ let x,v; do{ x=randNormal(r); v=1+c*x; }while(v<=0); v=v*v*v; const u=r();
+    if(u<1-0.0331*x*x*x*x || Math.log(u)<0.5*x*x+d*(1-v+Math.log(v))) return d*v; }
+}
+function randPoisson(l,r){ if(l<=0) return 0; const L=Math.exp(-l); let k=0,p=1; do{ k++; p*=r(); }while(p>L); return k-1; }
+
+// A never-revised topic starts NEVER_REVISED_OVERDUE days overdue (as in the tracker) and keeps ageing.
+function daysOver(o){ return Math.max(0, o.since-THR[o.conf]+1); }
+function overdueScore(o){ return daysOver(o)*WT[o.conf]; }
+
+function simulate(weeks, runs, scenario, seed){
+  const t=today(), D=weeks*7, r=mulberry32(seed), from=addDays(t,-(SIM.lookbackDays-1));
+  const base = state.modules.map(m=>{
+    let n=0; m.topics.forEach(tp=>tp.sessions.forEach(s=>{ if(s.date>=from && s.date<=t) n++; }));
+    return { min:m.weeklyMin, recent:n, topics:m.topics.map(tp=>{ const conf=CONF_IDX[tp.confidence];
+      return { conf, since: tp.lastRevised ? Math.max(0,daysBetween(tp.lastRevised,t)) : THR[conf]+NEVER_REVISED_OVERDUE-1 }; }) };
+  });
+  const T = Array.from({length:D+1},()=>new Float64Array(runs)); // topics overdue
+  const S = Array.from({length:D+1},()=>new Float64Array(runs)); // total days overdue
+  const behindWeeks = base.map(()=>new Float64Array(runs));
+  const measure=(mods,d,run)=>{ let c=0,s=0; for(const m of mods) for(const o of m.topics){ const x=daysOver(o); if(x>0) c++; s+=x; } T[d][run]=c; S[d][run]=s; };
+  for(let run=0; run<runs; run++){
+    const mods = base.map(b=>({ min:b.min, rate: randGamma(b.recent+0.5,r)/SIM.lookbackDays, week:0, topics:b.topics.map(o=>({conf:o.conf,since:o.since})) }));
+    measure(mods,0,run);
+    for(let d=1; d<=D; d++){
+      for(const m of mods){
+        for(const o of m.topics){ o.since++; if(o.conf>0 && o.since>2*THR[o.conf] && r()<SIM.forgetPerDay) o.conf--; }
+        let n = randPoisson(m.rate,r);
+        if(scenario==='min' && d%7===0) n = Math.max(n, m.min-m.week);
+        for(let k=0; k<n && m.topics.length; k++){
+          let pick;
+          if(r()<SIM.pickMostOverdue){ pick=m.topics[0]; for(const o of m.topics){ const a=overdueScore(o), b=overdueScore(pick); if(a>b || (a===b && o.conf<pick.conf)) pick=o; } }
+          else pick = m.topics[Math.floor(r()*m.topics.length)];
+          pick.since=0; if(r()<SIM.levelUp[pick.conf]) pick.conf++;
+        }
+        m.week+=n;
+      }
+      if(d%7===0) mods.forEach((m,i)=>{ if(m.week<m.min) behindWeeks[i][run]++; m.week=0; });
+      measure(mods,d,run);
+    }
+  }
+  const q=(a,p)=>{ const i=(a.length-1)*p, lo=Math.floor(i), hi=Math.ceil(i); return a[lo]+(a[hi]-a[lo])*(i-lo); };
+  const summarise = daily => ({
+    bands: daily.map(a=>{ const s=Float64Array.from(a).sort(); return { p5:q(s,.05), p25:q(s,.25), p50:q(s,.5), p75:q(s,.75), p95:q(s,.95) }; }),
+    paths: Array.from({length:Math.min(SIM.paths,runs)},(_,k)=>daily.map(a=>a[k])),
+    worse: daily[D].reduce((n,v,i)=>n+(v>daily[0][i]?1:0),0)/runs,
+    now: daily[0][0]
+  });
+  return { D, weeks, runs, topics:summarise(T), days:summarise(S),
+    behind: behindWeeks.map(a=>a.reduce((x,y)=>x+y,0)/(runs*weeks)), total:base.reduce((n,b)=>n+b.topics.length,0) };
+}
+
+let fc = null; // { seed, pace, min }
+function runForecast(newSeed){
+  const weeks = +$('fcWeeks').value, runs = +$('fcRuns').value, compare = $('fcCompare').checked;
+  if(newSeed || !fc) fc = { seed: (Math.random()*2**31)|0 };
+  const btn = $('fcRun'); btn.disabled = true; btn.textContent = 'Simulating…';
+  setTimeout(()=>{ // let the button state paint first
+    fc.pace = simulate(weeks, runs, 'pace', fc.seed);
+    fc.min  = compare ? simulate(weeks, runs, 'min', fc.seed) : null;
+    btn.disabled = false; btn.textContent = 'Run simulation again';
+    renderForecast();
+  }, 30);
+}
+function metricKey(){ return 'days'; } // the chart always shows total days overdue
+
+function renderForecast(){
+  if(!fc || !fc.pace) return;
+  const P=fc.pace, M=fc.min, mk=metricKey(), MT=METRICS[mk], p=P[mk], m=M&&M[mk], end=p.bands[P.D], r0=Math.round;
+  if(!P.total){
+    $('fcTiles').innerHTML=''; $('fcChart').innerHTML='<div class="empty">Add some topics on the Tracker tab first, then come back to see your forecast.</div>';
+    $('fcModules').innerHTML=''; $('fcTable').innerHTML=''; $('fcLegend').innerHTML=''; $('fcMeaning').innerHTML=''; $('fcCaption').textContent=''; return;
+  }
+  const of = mk==='topics' ? ' <span class="of">of '+P.total+' topics overdue</span>' : ' <span class="of">days overdue in total</span>';
+  let tiles =
+    '<div class="card tile"><div class="label">In '+P.weeks+' weeks at your current pace</div>'+
+      '<div class="big"><span class="swatch" style="background:var(--s-pace)"></span>'+r0(end.p50)+of+'</div>'+
+      '<div class="sub">90% of runs: '+r0(end.p5)+'–'+r0(end.p95)+' · today: '+r0(p.now)+'</div></div>';
+  if(M){ const e=m.bands[M.D], diff=r0(end.p50)-r0(e.p50);
+    tiles += '<div class="card tile"><div class="label">If you hit every weekly minimum</div>'+
+      '<div class="big"><span class="swatch" style="background:var(--s-min)"></span>'+r0(e.p50)+of+'</div>'+
+      '<div class="sub">90% of runs: '+r0(e.p5)+'–'+r0(e.p95)+' · '+(diff>0 ? diff+' fewer than current pace' : 'about the same as current pace')+'</div></div>'; }
+  tiles += '<div class="card tile"><div class="label">Chance you end up worse off than today</div>'+
+    '<div class="big">'+Math.round(p.worse*100)+'%</div><div class="sub">More '+MT.short+' in '+P.weeks+' weeks than right now, at your current pace</div></div>';
+  $('fcTiles').innerHTML = tiles;
+  // Plain-English meaning, always in topics (easier to picture than days)
+  const tp=r0(P.topics.bands[P.D].p50), tm=M?r0(M.topics.bands[M.D].p50):null;
+  $('fcMeaning').innerHTML = tp===0
+    ? '<b>What this means:</b> at your current pace you stay on top of everything. Keep it going.'
+    : '<b>What this means:</b> in '+P.weeks+' weeks you’d likely have <b>'+plural(tp,'topic')+'</b> you’ve half-forgotten, '+(tp===1?'a chunk':'chunks')+' you’ll have to relearn, probably in a rush right before the exam.'+
+      (tm!==null && tm<tp ? ' Just hitting your weekly minimums cuts that to <b>'+tm+'</b>.' : '');
+  $('fcTitle').textContent = MT.name+', run by run.';
+
+  $('fcLegend').innerHTML = '<span><i class="swatch" style="background:var(--s-pace)"></i>Current pace</span>'+(M?'<span><i class="swatch" style="background:var(--s-min)"></i>Hit every weekly minimum</span>':'')+
+    '<span><i class="legend-line"></i>Median</span>';
+
+  $('fcModules').innerHTML = state.modules.map((mod,i)=>{
+    const pc = Math.round(P.behind[i]*100);
+    return '<div class="mrow" role="img" aria-label="'+esc(mod.name)+': behind in '+pc+'% of weeks"><span>'+esc(mod.name)+'</span><span class="track"><span style="width:'+pc+'%"></span></span><span class="pct">'+pc+'%</span></div>';
+  }).join('');
+
+  let rows='';
+  for(let w=0; w<=P.weeks; w++){ const b=p.bands[w*7], c=m&&m.bands[w*7];
+    rows += '<tr><td>'+(w===0?'Today':'Week '+w)+'</td><td>'+r0(b.p50)+'</td><td>'+r0(b.p25)+'–'+r0(b.p75)+'</td><td>'+r0(b.p5)+'–'+r0(b.p95)+'</td>'+
+      (M?'<td>'+r0(c.p50)+'</td><td>'+r0(c.p5)+'–'+r0(c.p95)+'</td>':'')+'</tr>'; }
+  $('fcTable').innerHTML = '<p class="small" style="margin:0 0 4px">'+MT.name+'</p><div class="table-scroll"><table class="fc-table"><thead><tr><th>When</th><th>Pace median</th><th>Pace 50%</th><th>Pace 90%</th>'+
+    (M?'<th>Minimums median</th><th>Minimums 90%</th>':'')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+
+  drawSpaghetti();
+}
+
+/* Each simulated run gets its own shade inside its scenario's hue family,
+   so the runs read as a tangle while the two scenarios stay distinguishable. */
+function runColour(scn, k, dark){
+  const fam = scn==='pace' ? [348, 8, 22, 34, 0, 14] : [212, 228, 242, 196, 256, 220];
+  const h = fam[k % fam.length] + ((k*37)%9) - 4;
+  const l = dark ? 58 + (k*13)%14 : 40 + (k*11)%14;
+  return 'hsl('+h+' '+(dark?78:70)+'% '+l+'%)';
+}
+
+function drawSpaghetti(){
+  const host=$('fcChart'); if(!fc || !fc.pace || !host.clientWidth) return;
+  const P=fc.pace, M=fc.min, mk=metricKey(), MT=METRICS[mk];
+  const dark = matchMedia('(prefers-color-scheme: dark)').matches ? document.documentElement.dataset.theme!=='light' : document.documentElement.dataset.theme==='dark';
+  const series=[{k:'pace',res:P[mk],col:'var(--s-pace)',name:'Current pace'}].concat(M?[{k:'min',res:M[mk],col:'var(--s-min)',name:'Hit minimums'}]:[]);
+  const narrow = host.clientWidth<480;
+  const W=host.clientWidth, H=narrow?250:320, L=narrow?32:52, R=narrow?30:44, T=10, B=40;
+  // y range from the drawn runs, with headroom; nice ticks
+  let hi=1; series.forEach(s=>s.res.paths.forEach(pth=>pth.forEach(v=>{ if(v>hi) hi=v; })));
+  const rawStep = hi/4, mag = Math.pow(10,Math.floor(Math.log10(rawStep))), step = [1,2,2.5,5,10].map(f=>f*mag).find(s=>s>=rawStep) || 10*mag;
+  const niceStep = mk==='topics' ? Math.max(1,Math.ceil(step)) : step;
+  const yMax = Math.ceil((hi*1.05)/niceStep)*niceStep;
+  const x=d=>L+d/P.D*(W-L-R), y=v=>T+(1-v/yMax)*(H-T-B);
+  // jitter whole-number topic counts slightly so overlapping runs stay visible
+  const jit = (k,d)=> mk==='topics' ? (((k*7919+d*104729)%1000)/1000-0.5)*0.2 : 0;
+  const pathOf=(arr,k)=>'M'+arr.map((v,d)=>x(d).toFixed(1)+','+y(Math.max(0,v+jit(k,d))).toFixed(1)).join('L');
+
+  let g='<rect class="plot" x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+(H-T-B)+'" rx="10"/><g class="grid">';
+  for(let v=0; v<=yMax+1e-9; v+=niceStep) g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text class="ax" x="'+(L-8)+'" y="'+(y(v)+3.5)+'" text-anchor="end">'+(+v.toFixed(2))+'</text>';
+  const dStep = P.D>56 || narrow ? 14 : 7;
+  for(let d=0; d<=P.D; d+=dStep) g+='<line x1="'+x(d)+'" x2="'+x(d)+'" y1="'+T+'" y2="'+(H-B)+'"/><text class="ax" x="'+x(d)+'" y="'+(H-B+16)+'" text-anchor="middle">'+d+'</text>';
+  g+='</g><text class="ax-title" x="'+(L+(W-L-R)/2)+'" y="'+(H-4)+'" text-anchor="middle">Days from today</text>'+
+     (narrow ? '' : '<text class="ax-title" transform="translate(12,'+(T+(H-T-B)/2)+') rotate(-90)" text-anchor="middle">'+MT.axis+'</text>');
+
+  let runsSvg='', med='';
+  series.forEach(s=>{ s.res.paths.forEach((pth,k)=>{ runsSvg+='<path d="'+pathOf(pth,k+(s.k==='min'?500:0))+'" fill="none" stroke="'+runColour(s.k,k,dark)+'" stroke-width="0.6" stroke-linejoin="round" opacity=".5"/>'; }); });
+  series.forEach(s=>{
+    med+='<path d="'+'M'+s.res.bands.map((b,i)=>x(i).toFixed(1)+','+y(b.p50).toFixed(1)).join('L')+'" fill="none" stroke="var(--surface-ring)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" opacity=".7"/>'+
+         '<path d="'+'M'+s.res.bands.map((b,i)=>x(i).toFixed(1)+','+y(b.p50).toFixed(1)).join('L')+'" fill="none" stroke="'+s.col+'" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>'; });
+  const ends=series.map(s=>({s, v:s.res.bands[P.D].p50, yy:y(s.res.bands[P.D].p50)}));
+  if(ends.length===2 && Math.abs(ends[0].yy-ends[1].yy)<14){ const up=ends[0].yy<ends[1].yy?0:1; ends[up].yy-=7; ends[1-up].yy+=7; }
+  let lab=''; ends.forEach(e=>{ lab+='<circle cx="'+x(P.D)+'" cy="'+y(e.v)+'" r="4.5" fill="'+e.s.col+'" stroke="var(--surface-ring)" stroke-width="2"/><text class="lbl" x="'+(x(P.D)+9)+'" y="'+(e.yy+4)+'">'+Math.round(e.v)+'</text>'; });
+
+  host.innerHTML='<svg width="'+W+'" height="'+H+'" role="img" aria-label="'+MT.name+' over the next '+P.weeks+' weeks: '+series[0].res.paths.length+' simulated runs per scenario. At current pace the median reaches '+Math.round(P[mk].bands[P.D].p50)+'.">'+
+    g+runsSvg+med+lab+
+    '<line class="xh" id="fcXh" y1="'+T+'" y2="'+(H-B)+'" style="display:none"/><g id="fcDots"></g>'+
+    '<rect x="'+L+'" y="0" width="'+(W-L-R)+'" height="'+(H-B)+'" fill="transparent" id="fcHit"/></svg><div class="tip" id="fcTip" hidden></div>';
+  $('fcCaption').textContent = 'Thin lines: '+series[0].res.paths.length+' individual simulated runs'+(M?' per scenario':'')+' · bold line: median of all '+P.runs.toLocaleString('en-GB')+' runs'+(mk==='topics'?' · runs nudged apart slightly so they don’t overlap':'');
+
+  const hit=$('fcHit'), tip=$('fcTip'), xh=$('fcXh'), dots=$('fcDots');
+  const move=ev=>{
+    const rect=hit.getBoundingClientRect(); const d=Math.max(0,Math.min(P.D,Math.round((ev.clientX-rect.left)/rect.width*P.D)));
+    xh.setAttribute('x1',x(d)); xh.setAttribute('x2',x(d)); xh.style.display='';
+    dots.innerHTML=series.map(s=>'<circle cx="'+x(d)+'" cy="'+y(s.res.bands[d].p50)+'" r="4.5" fill="'+s.col+'" stroke="var(--surface-ring)" stroke-width="2"/>').join('');
+    tip.innerHTML='<div class="t">'+(d===0?'Today':fmtDate(addDays(today(),d)))+' · day '+d+'</div>'+series.map(s=>{const b=s.res.bands[d];
+      return '<div class="r"><i class="swatch" style="background:'+s.col+'"></i>'+s.name+': <b>'+Math.round(b.p50)+'</b> <span>('+Math.round(b.p25)+'–'+Math.round(b.p75)+')</span></div>';}).join('')+
+      '<div class="r" style="margin-top:2px">'+MT.short+', median (middle 50%)</div>';
+    tip.hidden=false; const tw=tip.offsetWidth; let left=x(d)+12; if(left+tw>W) left=x(d)-tw-12; tip.style.left=Math.max(0,left)+'px';
+  };
+  hit.addEventListener('pointermove',move); hit.addEventListener('pointerdown',move);
+  hit.addEventListener('pointerleave',()=>{ tip.hidden=true; xh.style.display='none'; dots.innerHTML=''; });
+}
+
+/* ---------- Tabs ---------- */
+function showView(v){
+  prefs.view = v; savePrefs();
+  const f = v==='forecast';
+  $('viewTracker').hidden = f; $('viewForecast').hidden = !f;
+  $('tabTracker').setAttribute('aria-selected', String(!f)); $('tabForecast').setAttribute('aria-selected', String(f));
+  $('tabTracker').classList.toggle('primary', !f); $('tabForecast').classList.toggle('primary', f);
+  if(f) runForecast(false);
+}
+$('tabTracker').addEventListener('click',()=>showView('tracker'));
+$('tabForecast').addEventListener('click',()=>showView('forecast'));
+$('fcRun').addEventListener('click',()=>runForecast(true));
+['fcWeeks','fcRuns','fcCompare'].forEach(id=>$(id).addEventListener('change',()=>runForecast(false)));
+try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawSpaghetti); }catch(e){}
+let rsz; window.addEventListener('resize',()=>{ clearTimeout(rsz); rsz=setTimeout(drawSpaghetti,120); });
+
+// Re-render when the tab regains focus (e.g. left open overnight) so "today" stays correct.
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ render(); if(prefs.view==='forecast') runForecast(false); } });
+
+render();
+showView(prefs.view==='forecast' ? 'forecast' : 'tracker');
+})();
+</script>
+</body>
+</html>

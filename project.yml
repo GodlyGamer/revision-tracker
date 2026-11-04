@@ -1,0 +1,40 @@
+name: RevisionTracker
+options:
+  bundleIdPrefix: com.youssoufdiallo
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  developmentLanguage: en-GB
+
+targets:
+  RevisionTracker:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: App
+        excludes:
+          - "Resources/Info.plist"
+      - path: index.html
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_NAME: RevisionTracker
+        PRODUCT_BUNDLE_IDENTIFIER: com.youssoufdiallo.revisiontracker
+        INFOPLIST_FILE: App/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.0"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Manual
+        DEVELOPMENT_TEAM: ""
+
+schemes:
+  RevisionTracker:
+    build:
+      targets:
+        RevisionTracker: all
+    archive:
+      config: Release

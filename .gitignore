@@ -1,0 +1,11 @@
+.DS_Store
+.build/
+.swiftpm/
+*.xcodeproj/
+build/
+Payload/
+*.ipa
+DerivedData/
+.claude/worktrees/
+node_modules/
+.claude/
