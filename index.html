@@ -460,20 +460,130 @@ button:not(.link):not(.quiet):hover{filter:brightness(1.08)}
 /* ---------- No iridescent rim: plain hover, plain focus outline ---------- */
 button::before,button::after{display:none !important;animation:none !important}
 button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+/* ================= Clean layout ================= */
+.ico{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+header.top{align-items:flex-start;flex-wrap:nowrap}
+header.top h1{font-size:1.75rem;font-weight:500;letter-spacing:-.02em}
+.sub{font-size:.88rem;color:var(--muted);margin-top:4px}
+.icon-btn{width:44px;height:44px;min-height:44px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%}
+.icon-btn .ico{width:20px;height:20px}
+.week-prog{display:flex;align-items:center;gap:10px;margin:14px 0 4px}
+.week-prog:empty{display:none}
+.wp-bar{flex:1;height:3px;border-radius:2px;background:var(--track);overflow:hidden}
+.wp-bar>span{display:block;height:100%;background:var(--text);border-radius:2px}
+h2{font-size:1.05rem;font-weight:500;margin:30px 0 12px}
+
+/* Up next */
+.next-list{gap:10px}
+.nx{list-style:none;border-radius:26px;padding:16px 18px;background:var(--pbg);box-shadow:var(--pshadow);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%);isolation:isolate}
+.nx[role=button]{cursor:pointer}
+.nx[role=button]:hover{filter:brightness(1.08)}
+.nx[role=button]:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.nx-row{display:flex;align-items:center;gap:16px}
+.nx-num{display:flex;flex-direction:column;align-items:center;min-width:34px;line-height:1}
+.nx-num .cap{font-size:.62rem;margin-bottom:5px}
+.nx-num b{font-size:1.7rem;font-weight:400}
+.nx-div{width:1px;align-self:stretch;background:var(--hair);margin:2px 0}
+.nx-body{flex:1;min-width:0}
+.nx-topic{font-weight:500;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nx-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-top:6px;font-size:.84rem;color:var(--muted)}
+.nx-meta>span{display:inline-flex;align-items:center;gap:5px}
+.nx-mod{color:var(--faint)}
+.nx-flag{color:var(--ember);display:inline-flex}
+.nx-flag .ico{width:18px;height:18px}
+.nx:not(.hero) .nx-topic{color:var(--muted)}
+.nx:not(.hero) .nx-num b{color:var(--faint)}
+.nx-cta.primary,#nextList .nx-cta.primary{display:block;width:100%;margin-top:16px;min-height:52px;font-size:1rem;font-weight:600;
+  color:var(--priink);background:var(--pribg);box-shadow:var(--prishadow);text-shadow:none}
+
+/* This week */
+.grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+a.mod-card{display:flex;flex-direction:column;gap:12px;color:inherit;text-decoration:none;border-radius:22px;padding:16px}
+a.mod-card:hover{text-decoration:none;filter:brightness(1.08)}
+.mc-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.mc-top h3{font-size:.98rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-count{font-family:"Geist Mono",ui-monospace,monospace;font-size:1.05rem}
+.mc-count span{color:var(--faint);font-size:.85rem}
+a.mod-card .bar{height:3px;border:none;box-shadow:none}
+a.mod-card:not(.behind) .bar>span{background:var(--text)}
+.mc-meta{display:flex;align-items:center;gap:12px;font-size:.8rem;color:var(--muted);font-family:"Geist Mono",ui-monospace,monospace}
+.mini{display:inline-flex;align-items:center;gap:5px;--rc:var(--muted)}
+.mini.green{--rc:var(--green)} .mini.amber{--rc:var(--amber)} .mini.ember{--rc:var(--ember)} .mini.cobalt{--rc:var(--cobalt)}
+.mini .ring{width:18px;height:18px}
+.mini .ring circle{fill:none;stroke-width:6}
+.mini .ring .trk{stroke:var(--rc);opacity:.18}
+.mini .ring .val{stroke:var(--rc);stroke-linecap:round;filter:none}
+.mc-flag,.mc-ok{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-family:"Geist",system-ui,sans-serif}
+.mc-flag{color:var(--ember)} .mc-ok{color:var(--faint)}
+.mc-flag .ico,.mc-ok .ico{width:14px;height:14px}
+
+/* Topics */
+.ex-line{font-size:.84rem;color:var(--faint);margin:-4px 0 10px;display:flex;gap:8px;align-items:center}
+.module-section{margin-top:22px}
+.module-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.module-head h3{font-size:.98rem;font-weight:500}
+.module-head .icon-btn{width:36px;height:36px;min-height:36px}
+.topics{gap:6px}
+.topic-row{display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 14px;border-radius:16px;cursor:pointer;
+  background:var(--pbg);box-shadow:var(--pshadow);border:none}
+.topic-row:hover{filter:brightness(1.1)}
+.topic-row:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.tr-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.95rem}
+.tr-due{font-family:"Geist Mono",ui-monospace,monospace;font-size:.8rem;color:var(--faint);min-width:2.6em;text-align:right}
+.tr-due.due{color:var(--ember)}
+.tr-chev{color:var(--faint);display:inline-flex}
+.add-topic{margin-top:6px}
+.add-topic input{background:none;border:1px dashed var(--field-border)}
+.add-module{justify-content:flex-start;margin-top:22px}
+
+/* Sheets */
+.sheet-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hist-list{list-style:none;margin:0;padding:0;display:grid;gap:2px;max-height:30vh;overflow:auto}
+.hist-list li{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:8px 0;border-top:1px solid var(--hair);font-size:.86rem;color:var(--muted)}
+.hist-list li span{overflow-wrap:anywhere}
+
+/* Forecast */
+.small-seg{margin:0}
+.small-seg button{padding:7px 14px;min-height:36px;font-size:.82rem}
+.small-seg button[aria-checked="false"]{background:none;box-shadow:none;color:var(--muted)}
+.fc-controls{gap:10px 16px}
+.fc-controls #fcRun{margin-left:auto}
+.tile{padding:16px 18px}
+.tile .big{font-size:2.1rem;margin:0}
+.tile .label{font-size:.8rem;color:var(--muted);margin-top:4px}
+.meaning{box-shadow:none;font-size:.9rem}
+
+/* Phone */
+@media (max-width:560px){
+  .fab.fab-off{display:none}
+  .dock{gap:0}
+  .grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  a.mod-card{padding:14px;min-width:0}
+  .mc-meta{display:grid;grid-template-columns:auto auto;justify-content:start;gap:6px 12px}
+  .mc-flag,.mc-ok{grid-column:1 / -1}
+  .mc-meta{flex-wrap:wrap;gap:8px}
+  .mc-flag,.mc-ok{margin-left:0}
+  .tiles{grid-template-columns:1fr 1fr}
+  .tiles .tile:last-child{grid-column:1 / -1}
+  #fcRun{display:inline-flex}
+}
+/* keep long names from widening the page */
+.topics,.next-list{grid-template-columns:minmax(0,1fr)}
+.topic-row,.nx,a.mod-card{min-width:0}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>Revision tracker.</h1>
-    <div class="toolbar">
-      <button id="btnExport" type="button" class="quiet">Export backup</button>
-      <button id="btnImport" type="button" class="quiet">Import backup</button>
-      <input id="fileImport" type="file" accept=".json,application/json" hidden>
-      <button id="btnTheme" type="button" class="quiet" aria-label="Change colour theme">Theme: Auto</button>
+    <div>
+      <h1>Revision.</h1>
+      <div class="sub" id="subLine"></div>
     </div>
+    <button type="button" class="quiet icon-btn" id="btnSettings" aria-label="Settings"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
   </header>
-  <div class="small muted" id="backupInfo"></div>
+  <div class="week-prog" id="weekProg"></div>
   <div id="banners"></div>
 
   <div class="dock">
@@ -487,21 +597,12 @@ button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 
   <div id="viewTracker" role="tabpanel" aria-labelledby="tabTracker">
   <section aria-labelledby="hNext">
-    <h2 id="hNext">Revise next.</h2>
+    <h2 id="hNext">Up next.</h2>
     <ol class="next-list" id="nextList"></ol>
-    <details class="how">
-      <summary>How is this worked out?</summary>
-      <div>
-        <p><b>Why it matters.</b> You forget what you don't go back to. Leave a topic too long and you're not revising it any more, you're relearning it. Pile up enough of those and you end up cramming the night before, stressed, and losing marks on questions you once could do.</p>
-        <p><b>When a topic is due.</b> Red topics need you back after 3 days, Amber after 7, Green after 14. Shakier topics fade faster, so they come round sooner. A topic you've never revised is always due.</p>
-        <p><b>What comes first.</b> The longer a topic has been overdue, and the weaker it is, the higher it ranks. Red counts 3×, Amber 2×, Green 1×.</p>
-        <p><b>No module left behind.</b> If a module hasn't had its weekly minimum yet (weeks start Monday), its topics get pushed up the list, even ones that aren't due yet.</p>
-      </div>
-    </details>
   </section>
 
   <section aria-labelledby="hMods">
-    <h2 id="hMods">Modules this week. <span class="cap" id="weekLabel"></span></h2>
+    <h2 id="hMods">This week.</h2>
     <div class="grid" id="modGrid"></div>
   </section>
 
@@ -509,70 +610,53 @@ button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
     <h2 id="hTopics">Topics.</h2>
     <div id="exampleBar"></div>
     <div id="moduleSections"></div>
-    <div class="add-module"><button type="button" data-action="addModule">+ Add module</button></div>
+    <div class="add-module"><button type="button" class="quiet" data-action="addModule">+ Add module</button></div>
   </section>
   </div>
 
   <div id="viewForecast" role="tabpanel" aria-labelledby="tabForecast" hidden>
     <section aria-labelledby="hFc">
-      <h2 id="hFc">If nothing changes. <span class="cap">Monte Carlo forecast</span></h2>
-      <p class="muted small" style="margin:-4px 0 14px;max-width:70ch">What happens if you keep revising the way you have for the last 4 weeks? This plays out the next few weeks a thousand times, with good days and bad days, so you can see where you're likely to end up.</p>
-      <div class="why">
-        <div><b>Overdue = forgetting.</b><span>A topic you leave too long fades. Coming back to it means relearning, not revising.</span></div>
-        <div><b>Forgetting = cramming.</b><span>The backlog doesn't go away. It lands on you in the last week before the exam.</span></div>
-        <div><b>Cramming = stress and lost marks.</b><span>Too much to relearn in too little time, and the questions you once could do are the ones you drop.</span></div>
-      </div>
+      <h2 id="hFc">Forecast.</h2>
+      <div class="sub" style="margin:-6px 0 14px">If you keep your pace from the last 4 weeks.</div>
       <div class="fc-controls">
-        <label class="minrow">Weeks ahead
-          <select id="fcWeeks"><option value="4">4</option><option value="8" selected>8</option><option value="12">12</option></select>
-        </label>
-        <label class="minrow">Runs
-          <select id="fcRuns"><option value="500">500</option><option value="1000" selected>1,000</option><option value="2000">2,000</option></select>
-        </label>
-        <label class="minrow check"><input type="checkbox" id="fcCompare" checked> Compare with hitting every weekly minimum</label>
-        <button type="button" id="fcRun" class="primary">Run again</button>
+        <div class="seg small-seg" role="radiogroup" aria-label="Weeks ahead" id="fcWeekSeg">
+          <button type="button" role="radio" data-w="4">4 wk</button><button type="button" role="radio" data-w="8">8 wk</button><button type="button" role="radio" data-w="12">12 wk</button>
+        </div>
+        <select id="fcWeeks" hidden><option value="4">4</option><option value="8" selected>8</option><option value="12">12</option></select>
+        <label class="minrow check"><input type="checkbox" id="fcCompare" checked> Compare</label>
+        <button type="button" id="fcRun" class="quiet icon-btn" aria-label="Run simulation again"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5v4h-4"/></svg></button>
       </div>
       <div class="tiles" id="fcTiles"></div>
       <p class="meaning" id="fcMeaning"></p>
       <div class="card fc-chart-card">
         <div class="fc-chart-head">
-          <h3 id="fcTitle">Total days overdue, run by run.</h3>
+          <h3 id="fcTitle">Days overdue.</h3>
           <div class="legend" id="fcLegend"></div>
         </div>
         <div class="chart-wrap" id="fcChart"></div>
         <div class="cap" id="fcCaption" style="margin-top:8px"></div>
       </div>
       <div class="card" style="margin-top:12px">
-        <h3>Chance each module is behind its weekly minimum.</h3>
-        <p class="small muted" style="margin:4px 0 12px">Share of simulated weeks where the module gets fewer sessions than its minimum, at your current pace.</p>
+        <h3 style="margin-bottom:12px">Chance of falling behind.</h3>
         <div id="fcModules"></div>
       </div>
       <details class="how">
-        <summary>Show the numbers as a table</summary>
-        <div id="fcTable"></div>
-      </details>
-      <details class="how">
-        <summary>How does the simulation work?</summary>
+        <summary>How it works</summary>
         <div>
-          <p><b>It copies your habits.</b> It looks at how often you've studied each module in the last 4 weeks and keeps you at that pace, with some random busy days and lazy days thrown in.</p>
-          <p><b>You get better when you revise.</b> A session sometimes moves a topic up a level (Red to Amber, Amber to Green). It doesn't always, just like real revision.</p>
-          <p><b>You get worse when you don't.</b> Leave a topic for twice its due gap and it starts slipping back down a level.</p>
-          <p><b>"Days overdue"</b> adds up how late every topic is. 3 topics each 5 days late = 15 days overdue. It's a rough measure of how much relearning is piling up.</p>
-          <p><b>The blue line</b> is the same you, except you always hit each module's weekly minimum. Nothing else changes, so the gap between the lines is what those minimums are worth.</p>
-          <p>It's a rough model to motivate you, not a crystal ball. The more sessions you log, the better it knows you.</p>
+          <p>It copies how often you've studied each module in the last 4 weeks, adds some good and bad days, and plays the next few weeks out a thousand times.</p>
+          <p>Revising can move a topic up a level. Leaving it too long lets it slip back. "Days overdue" adds up how late every topic is: it's the relearning piling up.</p>
+          <p>The blue line is the same you, hitting each weekly minimum. It's a rough guide, not a prediction.</p>
+          <div id="fcTable"></div>
         </div>
       </details>
     </section>
   </div>
 
-  <footer>
-    Data is saved in this browser only. Use <b>Export backup</b> regularly and keep the file somewhere safe (OneDrive, email to yourself, etc.).
-  </footer>
 </div>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<!-- Topic actions sheet (phone: ⋯ button or long-press a topic) -->
+<!-- Topic sheet: tap a topic -->
 <dialog id="dlgActions">
   <form method="dialog" class="sheet-actions">
     <div>
@@ -580,9 +664,45 @@ button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
       <div class="small muted" id="actSub"></div>
     </div>
     <button type="button" class="primary" data-act="log">Log session</button>
-    <button type="button" data-act="edit">Edit topic</button>
-    <button type="button" class="quiet danger" data-act="delete">Delete topic</button>
-    <button type="button" class="quiet" data-close>Cancel</button>
+    <div class="sheet-row">
+      <button type="button" data-act="edit">Edit</button>
+      <button type="button" class="quiet danger" data-act="delete">Delete</button>
+    </div>
+    <div><div class="cap" style="margin-bottom:4px">History</div><div id="actHist"></div></div>
+    <button type="button" class="quiet" data-close>Close</button>
+  </form>
+</dialog>
+
+<!-- Module sheet -->
+<dialog id="dlgModActions">
+  <form method="dialog" class="sheet-actions">
+    <h3 id="mactTitle">Module</h3>
+    <button type="button" data-mact="rename">Rename or change weekly minimum</button>
+    <button type="button" class="quiet danger" data-mact="delete">Delete module</button>
+    <button type="button" class="quiet" data-close>Close</button>
+  </form>
+</dialog>
+
+<!-- Settings sheet -->
+<dialog id="dlgSettings">
+  <form method="dialog" class="sheet-actions">
+    <h3>Settings.</h3>
+    <div class="small muted" id="backupInfo"></div>
+    <div class="sheet-row">
+      <button type="button" id="btnExport">Export backup</button>
+      <button type="button" id="btnImport">Import backup</button>
+    </div>
+    <input id="fileImport" type="file" accept=".json,application/json" hidden>
+    <button type="button" id="btnTheme" aria-label="Change colour theme">Theme: Auto</button>
+    <details class="how">
+      <summary>How it works</summary>
+      <div>
+        <p><b>Why it matters.</b> Leave a topic too long and you're relearning it, not revising it. Enough of those and you're cramming before the exam.</p>
+        <p><b>When a topic is due.</b> Red after 3 days, Amber after 7, Green after 14. Never revised: always.</p>
+        <p><b>What comes first.</b> The weaker and later a topic is, the higher it ranks. Modules below their weekly minimum get pushed up.</p>
+      </div>
+    </details>
+    <button type="button" class="quiet" data-close>Done</button>
   </form>
 </dialog>
 
@@ -832,74 +952,82 @@ function reasonText(x){
 const $ = id => document.getElementById(id);
 function ragBadge(c){ return '<span class="rag '+c+'"><span aria-hidden="true">'+SYMBOL[c]+'</span> '+LABEL[c]+'</span>'; }
 
+/* ---------- Icons (stroke, inherit colour) ---------- */
+const ICON = {
+  clock:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+  alert:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 2.8 19.5h18.4Z"/><path d="M12 10v4.2"/><path d="M12 17.2v.1"/></svg>',
+  check:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+  dots:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg>',
+  chev:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg>'
+};
+function ago(st){ return st.never ? 'New' : st.daysSince===0 ? 'Today' : st.daysSince+'d'; }
+
 function render(){
   const t = today();
-  // banners
-  let b='';
-  if(!storageOK) b += '<div class="banner warn"><b>Warning:</b> this browser is blocking local storage, so changes will be lost when you close the page. Use Export backup before closing, or open the file in Chrome, Edge or Firefox.</div>';
-  $('banners').innerHTML = b;
-  $('backupInfo').textContent = prefs.lastExport ? 'Last backup exported: '+fmtDate(prefs.lastExport)+(daysBetween(prefs.lastExport,t)>=7?' — time for a new one':'') : 'No backup exported yet from this browser.';
+  $('banners').innerHTML = storageOK ? '' : '<div class="banner warn"><b>Warning:</b> this browser is blocking storage, so changes will be lost when you close it. Export a backup from Settings.</div>';
+  $('backupInfo').textContent = prefs.lastExport ? 'Last backup: '+fmtDate(prefs.lastExport)+(daysBetween(prefs.lastExport,t)>=7?' · time for a new one':'') : 'No backup exported yet.';
 
-  // Revise next
+  // Header: one stats line + this week's progress
+  const nTopics = state.modules.reduce((n,m)=>n+m.topics.length,0);
+  const nDue = state.modules.reduce((n,m)=>n+m.topics.filter(tp=>topicStatus(tp,t).due).length,0);
+  const weeks = state.modules.map(m=>moduleWeek(m,t));
+  const nBehind = weeks.filter(w=>w.behind).length;
+  const done = state.modules.reduce((n,m,i)=>n+Math.min(weeks[i].sessions,m.weeklyMin),0), need = state.modules.reduce((n,m)=>n+m.weeklyMin,0);
+  $('subLine').textContent = nTopics ? plural(nTopics,'topic')+' · '+nDue+' due'+(nBehind?' · '+plural(nBehind,'module')+' behind':'') : 'Add a module to get started';
+  $('weekProg').innerHTML = need ? '<span class="cap">This week</span><span class="wp-bar" role="img" aria-label="'+done+' of '+need+' minimum sessions done this week"><span style="width:'+Math.round(done/need*100)+'%"></span></span><span class="cap">'+done+'/'+need+'</span>' : '';
+
+  // Up next: one hero card with the action, then slim cards
   const next = reviseNext(t);
-  $('nextList').innerHTML = next.length ? next.map((x,i)=>
-    '<li class="next-item"><div class="rank" aria-hidden="true">'+(i+1)+'</div><div class="body">'+
-      '<div class="cap">'+esc(x.m.name)+'</div>'+
-      '<div class="topic">'+esc(x.tp.name)+' '+ragBadge(x.tp.confidence)+(x.tp.example?' <span class="tag">Example</span>':'')+'</div>'+
-      '<div class="reason">'+esc(reasonText(x))+'</div>'+
-    '</div><button type="button"'+(i===0?' class="primary"':'')+' data-action="log" data-m="'+x.m.id+'" data-t="'+x.tp.id+'" aria-label="Log session for '+esc(x.tp.name)+'">Log session</button></li>'
-  ).join('') : !state.modules.some(m=>m.topics.length) ? '<li class="empty">Add a module and some topics below, and this will tell you what to revise first.</li>' : '<li class="empty">Nothing is due and every module has met its weekly minimum. Nice work. Add topics below or come back tomorrow.</li>';
+  $('nextList').innerHTML = next.length ? next.map((x,i)=>{
+    const st=x.st, hero=i===0;
+    return '<li class="nx'+(hero?' hero':'')+'"'+(hero?'':' role="button" tabindex="0" data-action="log" data-m="'+x.m.id+'" data-t="'+x.tp.id+'" aria-label="Log session for '+esc(x.tp.name)+'"')+'>'+
+      '<div class="nx-row">'+
+        '<div class="nx-num"><span class="cap">'+(hero?'Next':'Then')+'</span><b>'+(i+1)+'</b></div><span class="nx-div" aria-hidden="true"></span>'+
+        '<div class="nx-body"><div class="nx-topic">'+esc(x.tp.name)+'</div>'+
+          '<div class="nx-meta">'+ragBadge(x.tp.confidence)+'<span>'+ICON.clock+ago(st)+'</span><span class="nx-mod">'+esc(x.m.name)+'</span></div></div>'+
+        (x.wk.behind ? '<span class="nx-flag" title="'+esc(x.m.name)+' is behind its weekly minimum">'+ICON.alert+'<span class="sr">Module behind</span></span>' : '')+
+      '</div>'+
+      (hero ? '<button type="button" class="primary nx-cta" data-action="log" data-m="'+x.m.id+'" data-t="'+x.tp.id+'" aria-label="Log session for '+esc(x.tp.name)+'">Log session</button>' : '')+
+    '</li>';
+  }).join('') : '<li class="empty">'+(nTopics ? 'All caught up. Nothing is due.' : 'Add a module and some topics to see what to revise first.')+'</li>';
 
-  // Week label
-  const ws = weekStart(t);
-  $('weekLabel').textContent = '(week starting '+fmtDate(ws)+')';
+  // Modules: name, sessions, bar, two mini rings
+  const totalWeekMin = weeks.reduce((n,w)=>n+w.minutes,0);
+  $('modGrid').innerHTML = state.modules.length ? state.modules.map((m,i)=>{
+    const wk=weeks[i], pct = m.weeklyMin ? Math.min(100,Math.round(wk.sessions/m.weeklyMin*100)) : 100;
+    const last = m.topics.map(tp=>tp.lastRevised).filter(Boolean).sort().pop()||null, days = last?Math.max(0,daysBetween(last,t)):null;
+    const fcls = days===null||days>7 ? 'ember' : days>3 ? 'amber' : 'green', share = totalWeekMin ? wk.minutes/totalWeekMin : 0;
+    return '<a class="card mod-card'+(wk.behind?' behind':'')+'" href="#sec-'+m.id+'">'+
+      '<div class="mc-top"><h3>'+esc(m.name)+'</h3><span class="mc-count">'+wk.sessions+'<span>/'+m.weeklyMin+'</span></span></div>'+
+      '<div class="bar" role="img" aria-label="'+wk.sessions+' of '+m.weeklyMin+' sessions this week"><span style="width:'+pct+'%"></span></div>'+
+      '<div class="mc-meta">'+
+        '<span class="mini '+fcls+'" title="Last studied" aria-label="Last studied: '+(days===null?'never':days===0?'today':days+' days ago')+'">'+ringSvg(last?1-days/FRESH_SPAN:0,fcls)+(days===null?'Never':days===0?'Today':days+'d')+'</span>'+
+        '<span class="mini '+(wk.behind?'ember':'cobalt')+'" title="Time this week" aria-label="'+wk.minutes+' minutes this week">'+ringSvg(share,wk.behind?'ember':'cobalt')+wk.minutes+'m</span>'+
+        (wk.behind ? '<span class="mc-flag">'+ICON.alert+'Behind</span>' : '<span class="mc-ok">'+ICON.check+'On track</span>')+
+      '</div></a>';
+  }).join('') : '<div class="empty">No modules yet.</div>';
 
-  // Module cards
-  const totalWeekMin = state.modules.reduce((n,m)=>n+moduleWeek(m,t).minutes,0);
-  $('modGrid').innerHTML = state.modules.map(m=>{
-    const wk = moduleWeek(m,t);
-    const cnt = {red:0,amber:0,green:0};
-    m.topics.forEach(tp=>cnt[tp.confidence]++);
-    const pct = m.weeklyMin ? Math.min(100, Math.round(wk.sessions/m.weeklyMin*100)) : 100;
-    return '<div class="card mod-card'+(wk.behind?' behind':'')+'">'+
-      '<h3><a href="#sec-'+m.id+'" style="color:inherit">'+esc(m.name)+'</a></h3>'+
-      (wk.behind ? '<div class="behind-label">⚠ Behind: '+(m.weeklyMin-wk.sessions)+' more session'+(m.weeklyMin-wk.sessions===1?'':'s')+' needed this week</div>'
-                 : '<div class="ok-label">✓ Weekly minimum met</div>')+
-      '<div class="counts">'+ragBadge('red')+' <b>'+cnt.red+'</b> '+ragBadge('amber')+' <b>'+cnt.amber+'</b> '+ragBadge('green')+' <b>'+cnt.green+'</b></div>'+
-      '<div class="stat">Sessions: <b>'+wk.sessions+'</b> / '+m.weeklyMin+'</div>'+
-      '<div class="bar" role="img" aria-label="'+wk.sessions+' of '+m.weeklyMin+' sessions"><span style="width:'+pct+'%"></span></div>'+
-      ringPills(m,wk,t,totalWeekMin)+
-      '<label class="minrow">Weekly minimum <input type="number" min="0" max="50" value="'+m.weeklyMin+'" data-action="weeklyMin" data-m="'+m.id+'" aria-label="Weekly minimum sessions for '+esc(m.name)+'"></label>'+
+  // Example data: one quiet line
+  const exCount = state.modules.reduce((n,m)=>n+m.topics.filter(tp=>tp.example).length,0);
+  $('exampleBar').innerHTML = exCount ? '<div class="ex-line">Showing example topics <button type="button" class="link" data-action="clearExamples">Clear examples</button></div>' : '';
+
+  // Topics: one line per topic, tap for actions
+  $('moduleSections').innerHTML = state.modules.map(m=>{
+    const topics = m.topics.slice().sort((a,b)=>a.name.localeCompare(b.name));
+    return '<div class="module-section" id="sec-'+m.id+'">'+
+      '<div class="module-head"><h3>'+esc(m.name)+'</h3>'+
+        '<button type="button" class="quiet icon-btn" data-action="moduleMenu" data-m="'+m.id+'" aria-label="Options for '+esc(m.name)+'">'+ICON.dots+'</button></div>'+
+      (topics.length ? '<ul class="topics">'+topics.map(tp=>topicRow(m,tp,t)).join('')+'</ul>' : '<div class="empty">No topics yet.</div>')+
+      '<form class="add-topic" data-action="addTopic" data-m="'+m.id+'"><input type="text" name="name" maxlength="120" placeholder="Add a topic" aria-label="New topic for '+esc(m.name)+'" required><button type="submit" class="quiet">Add</button></form>'+
     '</div>';
   }).join('');
 
-  // Example bar
-  const exCount = state.modules.reduce((n,m)=>n+m.topics.filter(tp=>tp.example).length,0);
-  $('exampleBar').innerHTML = exCount ? '<div class="banner">The topics marked <span class="tag">Example</span> are sample data so you can see the app working. Delete them one by one, or <button type="button" class="link" data-action="clearExamples">delete all '+exCount+' examples</button>.</div>' : '';
-
-  // Module topic sections
-  $('moduleSections').innerHTML = state.modules.map(m=>{
-    const topics = m.topics.slice().sort((a,b)=>a.name.localeCompare(b.name));
-    return '<div class="card module-section" id="sec-'+m.id+'">'+
-      '<div class="module-head"><div class="mh-title"><h3>'+esc(m.name)+'</h3><span class="cap">'+plural(m.topics.length,'topic')+'</span></div>'+
-        '<div class="topic-actions mh-actions">'+
-          '<button type="button" class="quiet" data-action="editModule" data-m="'+m.id+'" aria-label="Rename '+esc(m.name)+'">Rename</button>'+
-          '<button type="button" class="quiet danger" data-action="delModule" data-m="'+m.id+'" aria-label="Delete module '+esc(m.name)+'">Delete module</button>'+
-        '</div></div>'+
-      (topics.length ? '<ul class="topics">'+topics.map(tp=>topicRow(m,tp,t)).join('')+'</ul>' : '<div class="empty">No topics yet. Add your first one below.</div>')+
-      '<form class="add-topic" data-action="addTopic" data-m="'+m.id+'"><input type="text" name="name" maxlength="120" placeholder="New topic name" aria-label="New topic for '+esc(m.name)+'" required><button type="submit">Add topic</button></form>'+
-    '</div>';
-  }).join('') + (state.modules.length ? '' : '<div class="card empty-modules"><h3>No modules yet.</h3><p class="small muted">Add the modules you’re revising for, then add topics to each one.</p></div>');
-  if(!state.modules.length) $('modGrid').innerHTML = '<div class="empty">No modules yet. Add one in the Topics section below.</div>';
-
   updateFab();
-
-  // theme button
   const th = prefs.theme||'auto';
   $('btnTheme').textContent = 'Theme: '+th.charAt(0).toUpperCase()+th.slice(1);
 }
 
-/* Ring pills: when the module was last studied, and how long this week */
+/* Mini rings: when the module was last studied, and its share of this week's time */
 const FRESH_SPAN = 14; // days until the "last studied" ring is empty
 function ringSvg(frac, cls){
   const r=18, c=2*Math.PI*r, f=Math.max(0,Math.min(1,frac));
@@ -908,47 +1036,23 @@ function ringSvg(frac, cls){
     (f>0 ? '<circle class="val" cx="24" cy="24" r="'+r+'" stroke-dasharray="'+(c*f).toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 24 24)"/>' : '')+
   '</svg>';
 }
-function ringPills(m,wk,t,totalWeekMin){
-  const last = m.topics.map(tp=>tp.lastRevised).filter(Boolean).sort().pop() || null;
-  const days = last ? Math.max(0,daysBetween(last,t)) : null;
-  const fresh = last ? 1 - days/FRESH_SPAN : 0;
-  const fcls = days===null || days>7 ? 'ember' : days>3 ? 'amber' : 'green';
-  const fval = days===null ? 'Never' : days===0 ? 'Today' : days===1 ? 'Yesterday' : days+' days ago';
-  const fcap = days===null ? 'Not studied yet' : 'Last studied · '+fmtDate(last);
-  const share = totalWeekMin ? wk.minutes/totalWeekMin : 0;
-  const mcls = wk.behind ? 'ember' : 'cobalt';
-  return '<div class="rings">'+
-    '<div class="ring-pill '+fcls+'" role="img" aria-label="'+esc(m.name)+' last studied: '+fval+'">'+ringSvg(fresh,fcls)+
-      '<div><div class="ring-val">'+fval+'</div><div class="ring-cap">'+fcap+'</div></div></div>'+
-    '<div class="ring-pill '+mcls+'" role="img" aria-label="'+wk.minutes+' minutes this week, '+Math.round(share*100)+' percent of all study time">'+ringSvg(share,mcls)+
-      '<div><div class="ring-val">'+wk.minutes+' min</div><div class="ring-cap">This week · '+Math.round(share*100)+'% of all study</div></div></div>'+
-  '</div>';
-}
 
 function topicRow(m,tp,t){
   const st = topicStatus(tp,t);
-  let when;
-  if(st.never) when = 'Never revised';
-  else when = 'Last revised '+(st.daysSince===0?'today':st.daysSince===1?'yesterday':st.daysSince+' days ago')+' ('+fmtDate(tp.lastRevised)+')';
-  const dueTxt = st.due ? '<span class="due">Due now</span>' : 'Due in '+plural(st.dueIn,'day');
-  const totalMin = tp.sessions.reduce((n,s)=>n+s.minutes,0);
-  const hist = tp.sessions.slice().sort((a,b)=>b.date.localeCompare(a.date));
-  return '<li class="topic-row">'+
-    '<div class="topic-main"><div>'+
-      '<div class="topic-title">'+esc(tp.name)+' '+ragBadge(tp.confidence)+(tp.example?' <span class="tag">Example</span>':'')+'</div>'+
-      '<div class="topic-meta">'+when+' · '+dueTxt+'</div>'+
-    '</div><div class="topic-actions">'+
-      '<button type="button" data-action="log" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Log session for '+esc(tp.name)+'">Log session</button>'+
-      '<button type="button" class="quiet desk-only" data-action="edit" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Edit '+esc(tp.name)+'">Edit</button>'+
-      '<button type="button" class="quiet danger desk-only" data-action="delTopic" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Delete '+esc(tp.name)+'">Delete</button>'+
-      '<button type="button" class="quiet more mob-only" data-action="more" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="More actions for '+esc(tp.name)+'"><span aria-hidden="true">⋯</span></button>'+
-    '</div></div>'+
-    '<details class="hist"><summary>Session history ('+plural(tp.sessions.length,'session')+', '+totalMin+' min)</summary>'+
-      (hist.length ? '<ul>'+hist.map(s=>'<li><span>'+fmtDate(s.date)+' · '+s.minutes+' min'+(s.note?' · '+esc(s.note):'')+'</span>'+
-        '<button type="button" class="link danger" data-action="delSession" data-m="'+m.id+'" data-t="'+tp.id+'" data-s="'+s.id+'" aria-label="Delete this session">Remove</button></li>').join('')+'</ul>'
-        : '<div class="empty">No sessions logged yet.</div>')+
-    '</details>'+
+  return '<li class="topic-row" role="button" tabindex="0" data-action="more" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="'+esc(tp.name)+', '+LABEL[tp.confidence]+', '+(st.due?'due now':'due in '+plural(st.dueIn,'day'))+'. Open options">'+
+    '<span class="tr-name">'+esc(tp.name)+'</span>'+
+    ragBadge(tp.confidence)+
+    '<span class="tr-due'+(st.due?' due':'')+'">'+(st.due?'Due':st.dueIn+'d')+'</span>'+
+    '<span class="tr-chev">'+ICON.chev+'</span>'+
   '</li>';
+}
+
+/* Topic sheet: actions plus session history */
+function historyHtml(m,tp){
+  const hist = tp.sessions.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  if(!hist.length) return '<div class="empty small">No sessions yet.</div>';
+  return '<ul class="hist-list">'+hist.map(s=>'<li><span>'+fmtDate(s.date)+' · '+s.minutes+'m'+(s.note?' · '+esc(s.note):'')+'</span>'+
+    '<button type="button" class="link danger" data-action="delSession" data-m="'+m.id+'" data-t="'+tp.id+'" data-s="'+s.id+'" aria-label="Remove session from '+fmtDate(s.date)+'">Remove</button></li>').join('')+'</ul>';
 }
 
 /* ---------- Theme ---------- */
@@ -1098,9 +1202,11 @@ document.addEventListener('click',e=>{
     tp.sessions = tp.sessions.filter(s=>s.id!==sid);
     tp.lastRevised = tp.sessions.length ? tp.sessions.map(s=>s.date).sort().pop() : null;
     save(); render();
+    if($('dlgActions').open) openActions(mid,tid);
     toast('Session removed from "'+tp.name+'"', snap);
   }
   else if(action==='more') openActions(mid,tid);
+  else if(action==='moduleMenu') openModuleMenu(mid);
   else if(action==='addModule') openModule(null);
   else if(action==='editModule') openModule(mid);
   else if(action==='delModule'){
@@ -1243,13 +1349,14 @@ function simulate(weeks, runs, scenario, seed){
 
 let fc = null; // { seed, pace, min }
 function runForecast(newSeed){
-  const weeks = +$('fcWeeks').value, runs = +$('fcRuns').value, compare = $('fcCompare').checked;
+  const weeks = +$('fcWeeks').value, runs = 1000, compare = $('fcCompare').checked;
+  document.querySelectorAll('#fcWeekSeg [data-w]').forEach(b=>{ const on=b.dataset.w===String(weeks); b.setAttribute('aria-checked',String(on)); b.setAttribute('aria-selected',String(on)); b.classList.toggle('primary',on); });
   if(newSeed || !fc) fc = { seed: (Math.random()*2**31)|0 };
-  const btn = $('fcRun'); btn.disabled = true; btn.textContent = 'Simulating…';
+  const btn = $('fcRun'); btn.disabled = true;
   setTimeout(()=>{ // let the button state paint first
     fc.pace = simulate(weeks, runs, 'pace', fc.seed);
     fc.min  = compare ? simulate(weeks, runs, 'min', fc.seed) : null;
-    btn.disabled = false; btn.textContent = 'Run simulation again';
+    btn.disabled = false;
     renderForecast();
   }, 30);
 }
@@ -1262,25 +1369,18 @@ function renderForecast(){
     $('fcTiles').innerHTML=''; $('fcChart').innerHTML='<div class="empty">Add some topics on the Tracker tab first, then come back to see your forecast.</div>';
     $('fcModules').innerHTML=''; $('fcTable').innerHTML=''; $('fcLegend').innerHTML=''; $('fcMeaning').innerHTML=''; $('fcCaption').textContent=''; return;
   }
-  const of = mk==='topics' ? ' <span class="of">of '+P.total+' topics overdue</span>' : ' <span class="of">days overdue in total</span>';
   let tiles =
-    '<div class="card tile"><div class="label">In '+P.weeks+' weeks at your current pace</div>'+
-      '<div class="big"><span class="swatch" style="background:var(--s-pace)"></span>'+r0(end.p50)+of+'</div>'+
-      '<div class="sub">90% of runs: '+r0(end.p5)+'–'+r0(end.p95)+' · today: '+r0(p.now)+'</div></div>';
-  if(M){ const e=m.bands[M.D], diff=r0(end.p50)-r0(e.p50);
-    tiles += '<div class="card tile"><div class="label">If you hit every weekly minimum</div>'+
-      '<div class="big"><span class="swatch" style="background:var(--s-min)"></span>'+r0(e.p50)+of+'</div>'+
-      '<div class="sub">90% of runs: '+r0(e.p5)+'–'+r0(e.p95)+' · '+(diff>0 ? diff+' fewer than current pace' : 'about the same as current pace')+'</div></div>'; }
-  tiles += '<div class="card tile"><div class="label">Chance you end up worse off than today</div>'+
-    '<div class="big">'+Math.round(p.worse*100)+'%</div><div class="sub">More '+MT.short+' in '+P.weeks+' weeks than right now, at your current pace</div></div>';
+    '<div class="card tile"><div class="big"><span class="swatch" style="background:var(--s-pace)"></span>'+r0(end.p50)+'</div><div class="label">days overdue in '+P.weeks+' wk at your pace</div></div>';
+  if(M){ const e=m.bands[M.D];
+    tiles += '<div class="card tile"><div class="big"><span class="swatch" style="background:var(--s-min)"></span>'+r0(e.p50)+'</div><div class="label">if you hit your weekly minimums</div></div>'; }
+  tiles += '<div class="card tile"><div class="big">'+Math.round(p.worse*100)+'%</div><div class="label">chance you end up worse off</div></div>';
   $('fcTiles').innerHTML = tiles;
   // Plain-English meaning, always in topics (easier to picture than days)
   const tp=r0(P.topics.bands[P.D].p50), tm=M?r0(M.topics.bands[M.D].p50):null;
   $('fcMeaning').innerHTML = tp===0
-    ? '<b>What this means:</b> at your current pace you stay on top of everything. Keep it going.'
-    : '<b>What this means:</b> in '+P.weeks+' weeks you’d likely have <b>'+plural(tp,'topic')+'</b> you’ve half-forgotten, '+(tp===1?'a chunk':'chunks')+' you’ll have to relearn, probably in a rush right before the exam.'+
-      (tm!==null && tm<tp ? ' Just hitting your weekly minimums cuts that to <b>'+tm+'</b>.' : '');
-  $('fcTitle').textContent = MT.name+', run by run.';
+    ? 'At this pace you stay on top of everything.'
+    : '<b>'+plural(tp,'topic')+'</b> half-forgotten by week '+P.weeks+'. That means cramming before the exam.'+(tm!==null && tm<tp ? ' Hit your minimums: <b>'+tm+'</b>.' : '');
+  $('fcTitle').textContent = 'Days overdue.';
 
   $('fcLegend').innerHTML = '<span><i class="swatch" style="background:var(--s-pace)"></i>Current pace</span>'+(M?'<span><i class="swatch" style="background:var(--s-min)"></i>Hit every weekly minimum</span>':'')+
     '<span><i class="legend-line"></i>Median</span>';
@@ -1346,7 +1446,7 @@ function drawSpaghetti(){
     g+runsSvg+med+lab+
     '<line class="xh" id="fcXh" y1="'+T+'" y2="'+(H-B)+'" style="display:none"/><g id="fcDots"></g>'+
     '<rect x="'+L+'" y="0" width="'+(W-L-R)+'" height="'+(H-B)+'" fill="transparent" id="fcHit"/></svg><div class="tip" id="fcTip" hidden></div>';
-  $('fcCaption').textContent = 'Thin lines: '+series[0].res.paths.length+' individual simulated runs'+(M?' per scenario':'')+' · bold line: median of all '+P.runs.toLocaleString('en-GB')+' runs'+(mk==='topics'?' · runs nudged apart slightly so they don’t overlap':'');
+  $('fcCaption').textContent = 'Each thin line is one simulated run · bold line is the median';
 
   const hit=$('fcHit'), tip=$('fcTip'), xh=$('fcXh'), dots=$('fcDots');
   const move=ev=>{
@@ -1376,6 +1476,7 @@ function showView(v){
 /* ---------- Phone: floating action button (changes with the tab) ---------- */
 function updateFab(){
   const fab=$('fab'); if(!fab) return;
+  fab.classList.toggle('fab-off', prefs.view!=='forecast');
   if(prefs.view==='forecast'){ fab.dataset.do='run'; $('fabIcon').textContent='↻'; fab.setAttribute('aria-label','Run simulation again'); return; }
   const top = reviseNext(today())[0];
   if(top){ fab.dataset.do='log'; fab.dataset.m=top.m.id; fab.dataset.t=top.tp.id; $('fabIcon').textContent='+'; fab.setAttribute('aria-label','Log session for '+top.tp.name+' (top of Revise next)'); }
@@ -1388,13 +1489,30 @@ $('fab').addEventListener('click',()=>{
   else openModule(null);
 });
 
-/* ---------- Phone: topic actions sheet (⋯ button or long-press) ---------- */
+/* ---------- Module sheet, settings sheet, keyboard for tappable cards ---------- */
+let mactTarget=null;
+function openModuleMenu(mid){ const m=findModule(mid); if(!m) return; mactTarget=mid; $('mactTitle').textContent=m.name; $('dlgModActions').showModal(); }
+$('dlgModActions').addEventListener('click',e=>{
+  const b=e.target.closest('[data-mact]'); if(!b||!mactTarget) return; const mid=mactTarget; $('dlgModActions').close();
+  if(b.dataset.mact==='rename') openModule(mid);
+  else { const m=findModule(mid); const snap=snapshot(); state.modules=state.modules.filter(x=>x.id!==mid); save(); render();
+    toast('Deleted "'+m.name+'"'+(m.topics.length?' and its '+plural(m.topics.length,'topic'):''), snap); }
+});
+$('btnSettings').addEventListener('click',()=>$('dlgSettings').showModal());
+document.addEventListener('keydown',e=>{
+  const el=e.target; if((e.key==='Enter'||e.key===' ') && el.matches && el.matches('[role=button][data-action]')){ e.preventDefault(); el.click(); }
+});
+
+/* ---------- Topic actions sheet (tap a topic or long-press) ---------- */
 let actTarget=null;
 function openActions(mid,tid){
   const tp=findTopic(mid,tid), m=findModule(mid); if(!tp) return;
   actTarget={mid,tid};
-  $('actTitle').textContent=tp.name; $('actSub').textContent=m.name+' · '+LABEL[tp.confidence];
-  $('dlgActions').showModal();
+  const st=topicStatus(tp,today());
+  $('actTitle').textContent=tp.name;
+  $('actSub').textContent=m.name+' · '+LABEL[tp.confidence]+' · '+(st.due?'due now':'due in '+plural(st.dueIn,'day'));
+  $('actHist').innerHTML=historyHtml(m,tp);
+  if(!$('dlgActions').open) $('dlgActions').showModal();
 }
 $('dlgActions').addEventListener('click',e=>{
   const b=e.target.closest('[data-act]'); if(!b || !actTarget) return;
@@ -1407,7 +1525,7 @@ $('dlgActions').addEventListener('click',e=>{
   let timer=null, start=null;
   document.addEventListener('pointerdown',e=>{
     const row=e.target.closest('.topic-row'); if(!row || e.target.closest('button,input,summary,a') || e.pointerType==='mouse') return;
-    const more=row.querySelector('[data-action=more]'); if(!more) return;
+    const more=row; if(!more.dataset.t) return;
     start={x:e.clientX,y:e.clientY};
     timer=setTimeout(()=>{ timer=null; if(navigator.vibrate) try{navigator.vibrate(10);}catch(_){}
       row.classList.add('pressed'); setTimeout(()=>row.classList.remove('pressed'),250);
@@ -1435,7 +1553,8 @@ document.querySelectorAll('dialog').forEach(d=>{
 $('tabTracker').addEventListener('click',()=>showView('tracker'));
 $('tabForecast').addEventListener('click',()=>showView('forecast'));
 $('fcRun').addEventListener('click',()=>runForecast(true));
-['fcWeeks','fcRuns','fcCompare'].forEach(id=>$(id).addEventListener('change',()=>runForecast(false)));
+['fcWeeks','fcCompare'].forEach(id=>$(id).addEventListener('change',()=>runForecast(false)));
+document.querySelectorAll('#fcWeekSeg [data-w]').forEach(b=>b.addEventListener('click',()=>{ $('fcWeeks').value=b.dataset.w; runForecast(false); }));
 try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawSpaghetti); }catch(e){}
 let rsz; window.addEventListener('resize',()=>{ clearTimeout(rsz); rsz=setTimeout(drawSpaghetti,120); });
 
