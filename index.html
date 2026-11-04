@@ -363,6 +363,87 @@ footer b{color:var(--muted);font-weight:500}
   .next-item > button{margin-left:auto}
   .topic-actions{width:100%}
 }
+/* ---------- Mobile patterns: floating bar, bottom sheets, no nested cards ---------- */
+.dock{display:flex;align-items:center;gap:10px}
+.fab,.mob-only{display:none}
+.grab{display:none}
+.topic-row.pressed{transform:scale(.985);transition:transform .15s}
+.sheet-actions{display:grid;gap:10px}
+.sheet-actions button{width:100%;min-height:48px}
+@keyframes sheet-up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fade-in{from{opacity:0}}
+@media (max-width:560px){
+  /* iOS reads best at a 17px base */
+  body{font-size:17px}
+  .small{font-size:.88rem}
+  .wrap{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+
+  /* Floating glass bottom bar: two tabs + the screen's main action broken out */
+  .dock{position:fixed;z-index:40;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);gap:10px;isolation:isolate}
+  .dock .seg{margin:0;padding:5px;background:var(--pbg);box-shadow:var(--pshadow);border:none;
+    -webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%)}
+  .dock .seg button{min-height:50px;padding:0 24px;font-size:.95rem}
+  .fab{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;min-height:60px;padding:0;border-radius:50%;font-size:1.7rem;font-weight:300;line-height:1}
+  #fcRun{display:none} /* the floating button runs it on phones */
+  /* the floating + is the one primary action, so #1 drops back to a normal glass button */
+  #nextList button.primary{color:var(--lgink);text-shadow:var(--lgtext-shadow);background:var(--lgbg);box-shadow:var(--lgshadow)}
+  .toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+
+  /* Bottom sheets instead of centred pop-ups */
+  dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:28px 28px 0 0;max-height:88vh;overflow:auto;
+    padding-bottom:env(safe-area-inset-bottom,0px)}
+  dialog[open]{animation:sheet-up .34s cubic-bezier(.2,.8,.2,1)}
+  dialog[open]::backdrop{animation:fade-in .3s}
+  .grab{display:block;height:26px;touch-action:none;cursor:grab;position:relative}
+  .grab::after{content:"";position:absolute;left:50%;top:10px;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--field-border)}
+  dialog form{padding-top:4px}
+  dialog .actions{flex-direction:column-reverse}
+  dialog .actions button{width:100%;min-height:50px}
+  /* the page behind recedes while a sheet is up */
+  .wrap{transition:transform .34s cubic-bezier(.2,.8,.2,1),filter .34s}
+  body:has(dialog[open]) .wrap{transform:scale(.94);filter:brightness(.85)}
+
+  /* No cards inside cards: module sections group with space, topic rows are the cards */
+  .module-section.card{background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0;border-radius:0;margin-top:26px}
+  .module-section .topic-row{background:var(--pbg);box-shadow:var(--pshadow);border:none;border-radius:20px}
+  .module-head h3{font-size:1.15rem}
+
+  /* Fewer buttons per row: Edit/Delete live in the ⋯ sheet */
+  .desk-only{display:none}
+  .mob-only{display:inline-flex}
+  .topic-main{flex-wrap:nowrap;align-items:flex-start}
+  .topic-main > div:first-child{min-width:0;flex:1}
+  .topic-main .topic-actions{width:auto;flex-wrap:nowrap;flex:none}
+  .more{width:44px;padding:0;justify-content:center;font-size:1.2rem}
+}
+@media (max-width:560px) and (prefers-reduced-motion: reduce){
+  dialog[open]{animation:fade-in .2s}
+  .wrap{transition:none} body:has(dialog[open]) .wrap{transform:none}
+}
+
+/* ---------- Matte buttons: no gloss, no rim highlight, no glowing text ---------- */
+:root{
+  --lgbg: rgba(255,255,255,.72);
+  --lgink:#1a1a1c; --lgtext-shadow:none;
+  --lgshadow: inset 0 0 0 1px rgba(0,0,0,.12), 0 1px 2px rgba(20,20,40,.06);
+  --pribg: #1a1a1c; --priink:#f4f4f6; --pri-text-shadow:none;
+  --prishadow: 0 1px 2px rgba(20,20,40,.18);
+}
+:root[data-theme="dark"]{
+  --lgbg: rgba(255,255,255,.07);
+  --lgink: rgba(255,255,255,.9); --lgtext-shadow:none;
+  --lgshadow: inset 0 0 0 1px rgba(255,255,255,.12);
+  --pribg: #ececef; --priink:#141416; --pri-text-shadow:none;
+  --prishadow: none;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --lgbg: rgba(255,255,255,.07);
+  --lgink: rgba(255,255,255,.9); --lgtext-shadow:none;
+  --lgshadow: inset 0 0 0 1px rgba(255,255,255,.12);
+  --pribg: #ececef; --priink:#141416; --pri-text-shadow:none;
+  --prishadow: none;
+}}
+button:not(.link):not(.quiet):hover{filter:brightness(1.08)}
 </style>
 </head>
 <body>
@@ -379,10 +460,14 @@ footer b{color:var(--muted);font-weight:500}
   <div class="small muted" id="backupInfo"></div>
   <div id="banners"></div>
 
-  <nav class="seg" role="tablist" aria-label="View">
-    <button type="button" role="tab" id="tabTracker" data-view="tracker" aria-controls="viewTracker">Tracker</button>
-    <button type="button" role="tab" id="tabForecast" data-view="forecast" aria-controls="viewForecast">Forecast</button>
-  </nav>
+  <div class="dock">
+    <nav class="seg" role="tablist" aria-label="View">
+      <button type="button" role="tab" id="tabTracker" data-view="tracker" aria-controls="viewTracker">Tracker</button>
+      <button type="button" role="tab" id="tabForecast" data-view="forecast" aria-controls="viewForecast">Forecast</button>
+    </nav>
+    <!-- Phone only: the screen's main action, broken out of the bar. It changes with the tab. -->
+    <button type="button" class="primary fab" id="fab" aria-label="Log session"><span aria-hidden="true" id="fabIcon">+</span></button>
+  </div>
 
   <div id="viewTracker" role="tabpanel" aria-labelledby="tabTracker">
   <section aria-labelledby="hNext">
@@ -470,6 +555,20 @@ footer b{color:var(--muted);font-weight:500}
 </div>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Topic actions sheet (phone: ⋯ button or long-press a topic) -->
+<dialog id="dlgActions">
+  <form method="dialog" class="sheet-actions">
+    <div>
+      <h3 id="actTitle">Topic</h3>
+      <div class="small muted" id="actSub"></div>
+    </div>
+    <button type="button" class="primary" data-act="log">Log session</button>
+    <button type="button" data-act="edit">Edit topic</button>
+    <button type="button" class="quiet danger" data-act="delete">Delete topic</button>
+    <button type="button" class="quiet" data-close>Cancel</button>
+  </form>
+</dialog>
 
 <!-- Log session dialog -->
 <dialog id="dlgLog">
@@ -777,6 +876,8 @@ function render(){
   }).join('') + (state.modules.length ? '' : '<div class="card empty-modules"><h3>No modules yet.</h3><p class="small muted">Add the modules you’re revising for, then add topics to each one.</p></div>');
   if(!state.modules.length) $('modGrid').innerHTML = '<div class="empty">No modules yet. Add one in the Topics section below.</div>';
 
+  updateFab();
+
   // theme button
   const th = prefs.theme||'auto';
   $('btnTheme').textContent = 'Theme: '+th.charAt(0).toUpperCase()+th.slice(1);
@@ -822,8 +923,9 @@ function topicRow(m,tp,t){
       '<div class="topic-meta">'+when+' · '+dueTxt+'</div>'+
     '</div><div class="topic-actions">'+
       '<button type="button" data-action="log" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Log session for '+esc(tp.name)+'">Log session</button>'+
-      '<button type="button" class="quiet" data-action="edit" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Edit '+esc(tp.name)+'">Edit</button>'+
-      '<button type="button" class="quiet danger" data-action="delTopic" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Delete '+esc(tp.name)+'">Delete</button>'+
+      '<button type="button" class="quiet desk-only" data-action="edit" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Edit '+esc(tp.name)+'">Edit</button>'+
+      '<button type="button" class="quiet danger desk-only" data-action="delTopic" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="Delete '+esc(tp.name)+'">Delete</button>'+
+      '<button type="button" class="quiet more mob-only" data-action="more" data-m="'+m.id+'" data-t="'+tp.id+'" aria-label="More actions for '+esc(tp.name)+'"><span aria-hidden="true">⋯</span></button>'+
     '</div></div>'+
     '<details class="hist"><summary>Session history ('+plural(tp.sessions.length,'session')+', '+totalMin+' min)</summary>'+
       (hist.length ? '<ul>'+hist.map(s=>'<li><span>'+fmtDate(s.date)+' · '+s.minutes+' min'+(s.note?' · '+esc(s.note):'')+'</span>'+
@@ -982,6 +1084,7 @@ document.addEventListener('click',e=>{
     save(); render();
     toast('Session removed from "'+tp.name+'"', snap);
   }
+  else if(action==='more') openActions(mid,tid);
   else if(action==='addModule') openModule(null);
   else if(action==='editModule') openModule(mid);
   else if(action==='delModule'){
@@ -1250,8 +1353,69 @@ function showView(v){
   $('viewTracker').hidden = f; $('viewForecast').hidden = !f;
   $('tabTracker').setAttribute('aria-selected', String(!f)); $('tabForecast').setAttribute('aria-selected', String(f));
   $('tabTracker').classList.toggle('primary', !f); $('tabForecast').classList.toggle('primary', f);
+  updateFab();
   if(f) runForecast(false);
 }
+
+/* ---------- Phone: floating action button (changes with the tab) ---------- */
+function updateFab(){
+  const fab=$('fab'); if(!fab) return;
+  if(prefs.view==='forecast'){ fab.dataset.do='run'; $('fabIcon').textContent='↻'; fab.setAttribute('aria-label','Run simulation again'); return; }
+  const top = reviseNext(today())[0];
+  if(top){ fab.dataset.do='log'; fab.dataset.m=top.m.id; fab.dataset.t=top.tp.id; $('fabIcon').textContent='+'; fab.setAttribute('aria-label','Log session for '+top.tp.name+' (top of Revise next)'); }
+  else { fab.dataset.do='addModule'; $('fabIcon').textContent='+'; fab.setAttribute('aria-label','Add module'); }
+}
+$('fab').addEventListener('click',()=>{
+  const f=$('fab').dataset;
+  if(f.do==='run') runForecast(true);
+  else if(f.do==='log') openLog(f.m,f.t);
+  else openModule(null);
+});
+
+/* ---------- Phone: topic actions sheet (⋯ button or long-press) ---------- */
+let actTarget=null;
+function openActions(mid,tid){
+  const tp=findTopic(mid,tid), m=findModule(mid); if(!tp) return;
+  actTarget={mid,tid};
+  $('actTitle').textContent=tp.name; $('actSub').textContent=m.name+' · '+LABEL[tp.confidence];
+  $('dlgActions').showModal();
+}
+$('dlgActions').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]'); if(!b || !actTarget) return;
+  const {mid,tid}=actTarget; $('dlgActions').close();
+  if(b.dataset.act==='log') openLog(mid,tid);
+  else if(b.dataset.act==='edit') openEdit(mid,tid);
+  else if(b.dataset.act==='delete'){ const del=document.querySelector('[data-action=delTopic][data-t="'+tid+'"]'); if(del) del.click(); }
+});
+(function longPress(){
+  let timer=null, start=null;
+  document.addEventListener('pointerdown',e=>{
+    const row=e.target.closest('.topic-row'); if(!row || e.target.closest('button,input,summary,a') || e.pointerType==='mouse') return;
+    const more=row.querySelector('[data-action=more]'); if(!more) return;
+    start={x:e.clientX,y:e.clientY};
+    timer=setTimeout(()=>{ timer=null; if(navigator.vibrate) try{navigator.vibrate(10);}catch(_){}
+      row.classList.add('pressed'); setTimeout(()=>row.classList.remove('pressed'),250);
+      openActions(more.dataset.m, more.dataset.t); }, 480);
+  });
+  const cancel=e=>{ if(timer && (!e || !start || e.type!=='pointermove' || Math.hypot(e.clientX-start.x,e.clientY-start.y)>8)){ clearTimeout(timer); timer=null; } };
+  ['pointerup','pointercancel','pointermove'].forEach(t=>document.addEventListener(t,cancel,{passive:true}));
+  document.addEventListener('contextmenu',e=>{ if(e.target.closest('.topic-row') && e.pointerType!=='mouse' && matchMedia('(pointer:coarse)').matches) e.preventDefault(); });
+})();
+
+/* ---------- Bottom sheets: tap outside or swipe down to close ---------- */
+const isPhone=()=>matchMedia('(max-width:560px)').matches;
+document.querySelectorAll('dialog').forEach(d=>{
+  const grab=document.createElement('div'); grab.className='grab'; grab.setAttribute('aria-hidden','true');
+  d.prepend(grab);
+  d.addEventListener('click',e=>{ if(e.target===d) d.close(); }); // backdrop tap
+  let y0=null, dy=0;
+  grab.addEventListener('pointerdown',e=>{ if(!isPhone()) return; y0=e.clientY; dy=0; grab.setPointerCapture(e.pointerId); d.style.transition='none'; });
+  grab.addEventListener('pointermove',e=>{ if(y0===null) return; dy=Math.max(0,e.clientY-y0); d.style.transform='translateY('+dy+'px)'; });
+  const end=()=>{ if(y0===null) return; y0=null; d.style.transition='transform .22s cubic-bezier(.2,.8,.2,1)';
+    if(dy>80){ d.style.transform='translateY(100%)'; setTimeout(()=>{ d.close(); d.style.transform=''; d.style.transition=''; },200); }
+    else d.style.transform=''; };
+  grab.addEventListener('pointerup',end); grab.addEventListener('pointercancel',end);
+});
 $('tabTracker').addEventListener('click',()=>showView('tracker'));
 $('tabForecast').addEventListener('click',()=>showView('forecast'));
 $('fcRun').addEventListener('click',()=>runForecast(true));
