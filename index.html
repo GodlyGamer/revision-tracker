@@ -444,6 +444,22 @@ footer b{color:var(--muted);font-weight:500}
   --prishadow: none;
 }}
 button:not(.link):not(.quiet):hover{filter:brightness(1.08)}
+/* ---------- Matte panels: no top rim, no sheen gradient ---------- */
+:root{
+  --pbg: rgba(255,255,255,.7);
+  --pshadow: inset 0 0 0 1px rgba(0,0,0,.08), 0 8px 24px rgba(20,20,40,.06);
+}
+:root[data-theme="dark"]{
+  --pbg: rgba(255,255,255,.045);
+  --pshadow: inset 0 0 0 1px rgba(255,255,255,.08);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --pbg: rgba(255,255,255,.045);
+  --pshadow: inset 0 0 0 1px rgba(255,255,255,.08);
+}}
+/* ---------- No iridescent rim: plain hover, plain focus outline ---------- */
+button::before,button::after{display:none !important;animation:none !important}
+button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 </style>
 </head>
 <body>
